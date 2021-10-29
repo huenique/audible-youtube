@@ -1,0 +1,59 @@
+{
+  "name": "youtube-to-audio",
+  "description": "Backend logic implementation for youtube-to-audio using FastAPI and youtube-dl",
+  "env": {
+    "APP_NAME": {
+      "description": "Word or phrase that identifies the app (used by OpenAPI)",
+      "value": "youtube-to-audio"
+    },
+    "APP_DESCRIPTION": {
+      "description": "The app description (used by OpenAPI)",
+      "value": "A youtube video converter used via REST API endpoints."
+    },
+    "APP_VERSION": {
+      "description": "Latest app version (used by OpenAPI)",
+      "value": "0.1.0"
+    },
+    "ALLOWED_ORIGINS": {
+      "description": "ALLOWED_ORIGINS, e.g.: Origins (domain, scheme, or port) allowed to use the app as a backend."
+    },
+    "MIN_CONNECTIONS_COUNT": {
+      "description": "",
+      "value": 10
+    },
+    "MAX_CONNECTIONS_COUNT": {
+      "description": "",
+      "value": 10
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "free"
+    }
+  },
+  "addons": [
+    {
+      "plan": "heroku-postgresql:hobby-dev",
+      "options": {
+        "version": "13"
+      },
+      "as": "DATABASE"
+    },
+    {
+      "plan": "heroku-redis:hobby-dev",
+      "options": {
+        "version": "6"
+      },
+      "as": "REDIS"
+    }
+  ],
+  "buildpacks": [
+    {
+      "url": "https://github.com/moneymeets/python-poetry-buildpack.git"
+    },
+    {
+      "url": "heroku/python"
+    }
+  ]
+}

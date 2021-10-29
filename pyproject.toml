@@ -1,0 +1,48 @@
+[tool.poetry]
+name = "youtube-to-audio"
+version = "0.1.0"
+description = "A youtube video converter used via REST API endpoints"
+authors = ["Hju Kneyck Flores <hjucode@gmail.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+fastapi = {extras = ["all"], version = "^0.70.0"}
+aiofiles = "^0.7.0"
+youtube_dl = "^2021.6.6"
+databases = "^0.5.3"
+asyncpg = "^0.24.0"
+loguru = "^0.5.3"
+slowapi = "^0.1.5"
+python-jose = {extras = ["cryptography"], version = "^3.3.0"}
+passlib = {extras = ["bcrypt"], version = "^1.7.4"}
+
+[tool.poetry.dev-dependencies]
+pyright = "^0.0.10"
+black = "^21.9b0"
+pylint = "^2.11.1"
+flake8 = "^4.0.1"
+isort = "^5.9.3"
+
+[tool.black]
+target-version = ["py39"]
+
+[tool.isort]
+profile = "black"
+
+[tool.pyright]
+typeCheckingMode = "strict"
+useLibraryCodeForTypes = true
+
+include = ["youtube_to_audio"]
+exclude = ["**/__pycache__"]
+
+reportMissingImports = true
+reportMissingTypeStubs = false
+
+pythonVersion = "3.9"
+pythonPlatform = "Linux"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
