@@ -16,6 +16,8 @@ loguru = "^0.5.3"
 slowapi = "^0.1.5"
 python-jose = {extras = ["cryptography"], version = "^3.3.0"}
 passlib = {extras = ["bcrypt"], version = "^1.7.4"}
+uvicorn = {extras = ["standard"], version = "^0.15.0"}
+gunicorn = "^20.1.0"
 
 [tool.poetry.dev-dependencies]
 pyright = "^0.0.10"
