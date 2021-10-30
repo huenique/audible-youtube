@@ -6,7 +6,7 @@ authors = ["Hju Kneyck Flores <hjucode@gmail.com>"]
 license = "MIT"
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "3.9.7"
 fastapi = {extras = ["all"], version = "^0.70.0"}
 aiofiles = "^0.7.0"
 youtube_dl = "^2021.6.6"
