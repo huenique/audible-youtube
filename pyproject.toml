@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "audible-youtube"
 version = "0.1.0"
-description = "A youtube video converter used via REST API endpoints"
+description = "A youtube video converter, used via REST API endpoints"
 authors = ["Hju Kneyck Flores <hjucode@gmail.com>"]
 license = "MIT"
 
