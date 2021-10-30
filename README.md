@@ -2,18 +2,55 @@
 
 Backend logic implementation for youtube-to-audio using FastAPI and youtube-dl.
 
+## Usage
+
+For better detail, start the app and go to http://127.0.0.1:8000/docs.
+
+To convert and download YouTube videos, use  `http://127.0.0.1:8000/download` with the `url` parameter.
+
+Example Python client:
+```py
+import asyncio
+import urllib.request
+
+
+async def download() -> None:
+    loop = asyncio.get_running_loop()
+    result = await loop.run_in_executor(
+        None,
+        urllib.request.urlretrieve,
+        "http://127.0.0.1:8000/download?url=https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        "audio.m4a",
+    )
+    print(repr(result))
+
+
+asyncio.run(download())
+```
+
+Using curl:
+```
+curl -X 'GET' 'http://127.0.0.1:8000/download?url=https://www.youtube.com/watch?v=dQw4w9WgXcQ' -H 'accept: */*' --output audo_file.m4a
+```
+
+You can also pass search terms to the url parameter:
+```
+curl -X 'GET' 'http://127.0.0.1:8000/download?url=rick+astley+never+gonna+give+you+up' -H 'accept: */*' --output audo_file.m4a
+```
+
+
+
 ## Development
 
 ### Installation
 
-[Fork](https://docs.github.com/en/get-started/quickstart/fork-a-repo#forking-a-repository) the youtube_to_audio repo on GitHub, then [clone](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository#cloning-a-repository) your repo locally.
+[Fork](https://docs.github.com/en/get-started/quickstart/fork-a-repo#forking-a-repository) the youtube_to_audio repo on GitHub, then [clone](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository#cloning-a-repository) your fork locally.
 
 ### Setup
 
 1. `cd` into the project directory, e.g. youtube-to-audio.
-2. Make sure [poetry](https://github.com/python-poetry/poetry#installation) is installed.
-3. Inside the project directory, run `poetry shell`. This will create or start the virtual environment.
-4. Run `poetry install`. This will install the project and its dependencies.
+2. Inside the project's root directory, run `poetry shell`. This will create or start the virtual environment. Make sure [poetry](https://github.com/python-poetry/poetry#installation) is installed.
+3. Run `poetry install`. This will install the project and its dependencies.
 
 ## Deployment
 
