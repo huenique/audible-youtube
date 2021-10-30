@@ -19,22 +19,21 @@ YDL_OPTS: dict[str, Any] = {
     "format": "bestaudio[ext=m4a]",
     "progress_hooks": [],
 }
-Result = Union[Any, None]
+SearchResult = Union[Any, None]
 
 
-class YoutubeDownload:
-
-    dl_name = ""
-    dl_size = ""
-    dl_path = ""
+class YoutubeVideo:
+    filename: str = ""
+    file_size: str = ""
+    file_path: str = ""
 
     def _download_progess_hook(self, download: dict[str, Any]):
         if download["status"] == "finished":
-            self.dl_size = str(download["_total_bytes_str"])
-            self.dl_name = Path(download["filename"]).name
-            self.dl_path = download["filename"]
+            self.filename = Path(download["filename"]).name
+            self.file_size = str(download["_total_bytes_str"])
+            self.file_path = download["filename"]
 
-    def _search_video(self, search_term: str) -> Result:
+    def _search_video(self, search_term: str) -> SearchResult:
         with YoutubeDL({"format": "bestaudio", "noplaylist": "True"}) as ydl:
             result: Optional[dict[str, Any]] = None
             result = ydl.extract_info(  # type: ignore
@@ -43,7 +42,7 @@ class YoutubeDownload:
             if result:
                 return result["entries"][0]
 
-    def _save_video(self, url: str) -> "YoutubeDownload":
+    def _download_video(self, url: str) -> "YoutubeVideo":
         # Remove everything after the first occurrence of the separator (&) in the URL.
         if "&list=" in url:
             url = "&".join(url.split("&")[:1])
@@ -56,14 +55,14 @@ class YoutubeDownload:
         except DownloadError:
             result = self._search_video(url)
             if result is not None:
-                self._save_video(result["webpage_url"])
+                self._download_video(result["webpage_url"])
 
         return self
 
-    async def search_video(self, url: str) -> Result:
+    async def search_video(self, term: str) -> SearchResult:
         loop = asyncio.get_running_loop()
-        return await loop.run_in_executor(None, self._search_video, url)
+        return await loop.run_in_executor(None, self._search_video, term)
 
-    async def save_video(self, url: str) -> "YoutubeDownload":
+    async def download_video(self, url: str) -> "YoutubeVideo":
         loop = asyncio.get_running_loop()
-        return await loop.run_in_executor(None, self._save_video, url)
+        return await loop.run_in_executor(None, self._download_video, url)
