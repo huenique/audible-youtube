@@ -2,55 +2,74 @@
 
 Backend logic implementation for audible-youtube using FastAPI and youtube-dl.
 
-## Usage
-
-For better detail, start the app and go to http://127.0.0.1:8000/docs.
-
-To convert and download YouTube videos, use  `http://127.0.0.1:8000/download` with the `url` parameter.
-
-Example Python client:
-```py
-import asyncio
-import urllib.request
-
-
-async def download() -> None:
-    loop = asyncio.get_running_loop()
-    result = await loop.run_in_executor(
-        None,
-        urllib.request.urlretrieve,
-        "http://127.0.0.1:8000/download?url=https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-        "audio.m4a",
-    )
-    print(repr(result))
-
-
-asyncio.run(download())
-```
-
-Using curl:
-```
-curl -X 'GET' 'http://127.0.0.1:8000/download?url=https://www.youtube.com/watch?v=dQw4w9WgXcQ' -H 'accept: */*' --output audo_file.m4a
-```
-
-You can also pass search terms to the url parameter:
-```
-curl -X 'GET' 'http://127.0.0.1:8000/download?url=rick+astley+never+gonna+give+you+up' -H 'accept: */*' --output audo_file.m4a
-```
-
-
-
-## Development
-
-### Installation
+## Installation
 
 [Fork](https://docs.github.com/en/get-started/quickstart/fork-a-repo#forking-a-repository) the audible_youtube repo on GitHub, then [clone](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository#cloning-a-repository) your fork locally.
 
-### Setup
+## Setup
 
 1. `cd` into the project directory, e.g. audible-youtube.
 2. Inside the project's root directory, run `poetry shell`. This will create or start the virtual environment. Make sure [poetry](https://github.com/python-poetry/poetry#installation) is installed.
 3. Run `poetry install`. This will install the project and its dependencies.
+4. Run the app: `uvicorn audible_youtube.main:app`.
+5. Go to `http://127.0.0.1:8000/docs`
+
+## Usage
+
+**Example Python client:**
+
+```py
+import asyncio
+import urllib.request
+from http.client import HTTPResponse
+
+
+async def search(term: str) -> HTTPResponse:
+    term = "+".join(term.split(" "))
+    loop = asyncio.get_running_loop()
+    return await loop.run_in_executor(
+        None,
+        urllib.request.urlopen,
+        f"http://127.0.0.1:8000/search?term={term}",
+    )
+
+
+async def download(video: str) -> None:
+    loop = asyncio.get_running_loop()
+    await loop.run_in_executor(
+        None,
+        urllib.request.urlretrieve,
+        f"http://127.0.0.1:8000/download?video={video}",
+        "audio.m4a",
+    )
+
+
+async def main(video: str) -> None:
+    result = await search(video)
+    print(result.read().decode())
+    await download(video)
+
+
+asyncio.run(main("rick astley never gonna give you up"))
+```
+
+**Using `curl` to convert and download YouTube videos:**
+
+```
+curl -X 'GET' 'http://127.0.0.1:8000/download?video=https://www.youtube.com/watch?v=dQw4w9WgXcQ' -H 'accept: */*' --output audo_file.m4a
+```
+
+You can also pass search terms to the video parameter:
+
+```
+curl -X 'GET' 'http://127.0.0.1:8000/download?video=rick+astley+never+gonna+give+you+up' -H 'accept: */*' --output audo_file.m4a
+```
+
+**Using `curl` to search for videos:**
+
+```
+curl -X 'GET' 'http://127.0.0.1:8000/search?term=rick+astley+never+gonna+give+you+up' -H 'accept: */*'
+```
 
 ## Deployment
 
