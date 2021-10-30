@@ -4,7 +4,7 @@ import asyncpg
 from fastapi import FastAPI
 from loguru import logger
 
-from youtube_to_audio.settings import (
+from audible_youtube.settings import (
     DATABASE_URL,
     MAX_CONNECTIONS_COUNT,
     MIN_CONNECTIONS_COUNT,

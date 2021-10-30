@@ -1,6 +1,6 @@
-# youtube-to-audio
+# audible-youtube
 
-Backend logic implementation for youtube-to-audio using FastAPI and youtube-dl.
+Backend logic implementation for audible-youtube using FastAPI and youtube-dl.
 
 ## Usage
 
@@ -44,17 +44,17 @@ curl -X 'GET' 'http://127.0.0.1:8000/download?url=rick+astley+never+gonna+give+y
 
 ### Installation
 
-[Fork](https://docs.github.com/en/get-started/quickstart/fork-a-repo#forking-a-repository) the youtube_to_audio repo on GitHub, then [clone](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository#cloning-a-repository) your fork locally.
+[Fork](https://docs.github.com/en/get-started/quickstart/fork-a-repo#forking-a-repository) the audible_youtube repo on GitHub, then [clone](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository#cloning-a-repository) your fork locally.
 
 ### Setup
 
-1. `cd` into the project directory, e.g. youtube-to-audio.
+1. `cd` into the project directory, e.g. audible-youtube.
 2. Inside the project's root directory, run `poetry shell`. This will create or start the virtual environment. Make sure [poetry](https://github.com/python-poetry/poetry#installation) is installed.
 3. Run `poetry install`. This will install the project and its dependencies.
 
 ## Deployment
 
-youtube-to-audio comes with an `app.json` file for creating an app on Heroku from a GitHub repository.
+audible-youtube comes with an `app.json` file for creating an app on Heroku from a GitHub repository.
 
 If your fork is public, you can use the following button:
 
@@ -74,4 +74,4 @@ Check the [contributing guide](./.github/CONTRIBUTING.md) to learn more about th
 
 ## License
 
-youtube-to-audio is distributed under the MIT License. See [LICENSE](./LICENSE) for more information.
+audible-youtube is distributed under the MIT License. See [LICENSE](./LICENSE) for more information.

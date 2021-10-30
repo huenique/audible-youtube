@@ -6,7 +6,7 @@ from typing import Any, Optional, Union
 from youtube_dl import YoutubeDL
 from youtube_dl.utils import DownloadError
 
-from youtube_to_audio.settings import BASE_DIR, MEDIA_ROOT
+from audible_youtube.settings import BASE_DIR, MEDIA_ROOT
 
 YOUTUBE_URL = "https://youtube.com"
 FILE_DIR = "{BASE_DIR},{MEDIA_ROOT}"

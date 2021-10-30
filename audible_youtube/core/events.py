@@ -3,7 +3,7 @@ from typing import Callable
 from fastapi import FastAPI
 from loguru import logger
 
-from youtube_to_audio.db.events import close_db_connection, connect_to_db
+from audible_youtube.db.events import close_db_connection, connect_to_db
 
 
 def create_start_app_handler(app: FastAPI) -> Callable:  # type: ignore

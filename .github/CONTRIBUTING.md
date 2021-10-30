@@ -9,7 +9,7 @@ You can contribute in many ways:
 
 ## Report Bugs
 
-Report bugs at https://github.com/SurPathHub/youtube_to_audio/issues.
+Report bugs at https://github.com/SurPathHub/audible_youtube/issues.
 
 If you are reporting a bug, please include:
 
@@ -26,11 +26,11 @@ Look through the GitHub issues for features. Anything tagged with "enhancement" 
 
 ## Write Documentation
 
-youtube_to_audio could always use more documentation, whether as part of the official youtube_to_audio docs, in docstrings, or even on the web in blog posts, articles, and such.
+audible_youtube could always use more documentation, whether as part of the official audible_youtube docs, in docstrings, or even on the web in blog posts, articles, and such.
 
 ## Submit Feedback
 
-The best way to send feedback is to file an issue at https://github.com/SurPathHub/youtube_to_audio/issues.
+The best way to send feedback is to file an issue at https://github.com/SurPathHub/audible_youtube/issues.
 
 If you are proposing a feature:
 
@@ -40,19 +40,19 @@ If you are proposing a feature:
 
 ## Get Started
 
-Ready to contribute? Here's how to set up `youtube_to_audio` for local development.
+Ready to contribute? Here's how to set up `audible_youtube` for local development.
 
-1. Fork the `youtube_to_audio` repo on GitHub.
+1. Fork the `audible_youtube` repo on GitHub.
 2. Clone your fork locally
 
     ```
-    $ git clone https://github.com/SurPathHub/youtube_to_audio.git
+    $ git clone https://github.com/SurPathHub/audible_youtube.git
     ```
 
 3. Install your local copy into a virtualenv. Assuming you have python [poetry](https://github.com/python-poetry/poetry) installed, this is how you set up your fork for local development
 
     ```
-    $ cd youtube_to_audio/
+    $ cd audible_youtube/
     $ poetry shell
     $ poetry install
     ```
@@ -68,13 +68,13 @@ Ready to contribute? Here's how to set up `youtube_to_audio` for local developme
 5. When you're done making changes, check that your changes pass flake8, pylint, and pyright.
 
     ```
-    $ flake8 youtube_to_audio
-    $ pylint youtube_to_audio
-    $ pyright youtube_to_audio
+    $ flake8 audible_youtube
+    $ pylint audible_youtube
+    $ pyright audible_youtube
     ```
 
 ## Commit Message Guidelines
-youtube_to_audio uses precise rules over how git commit messages can be formatted. This leads to more readable messages that are easy to follow when looking through the project history. But also, git commit messages are used to generate the change log. For instructions, head over to this site: https://www.conventionalcommits.org/en/v1.0.0/.
+audible_youtube uses precise rules over how git commit messages can be formatted. This leads to more readable messages that are easy to follow when looking through the project history. But also, git commit messages are used to generate the change log. For instructions, head over to this site: https://www.conventionalcommits.org/en/v1.0.0/.
 
 ```
 $ git add .
@@ -99,9 +99,9 @@ $ poetry install
 Before committing, stage your files and run style and linter checks
 
 ```
-$ black youtube_to_audio/  # apply codestyle
-$ isort --profile black youtube_to_audio/  # sort imports
-$ flake8 youtube_to_audio/
-$ pylint youtube_to_audio/
-$ pyright youtube_to_audio/  # optional static type checking
+$ black audible_youtube/  # apply codestyle
+$ isort --profile black audible_youtube/  # sort imports
+$ flake8 audible_youtube/
+$ pylint audible_youtube/
+$ pyright audible_youtube/  # optional static type checking
 ```

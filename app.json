@@ -1,10 +1,10 @@
 {
-  "name": "youtube-to-audio",
-  "description": "Backend logic implementation for youtube-to-audio using FastAPI and youtube-dl",
+  "name": "audible-youtube",
+  "description": "Backend logic implementation for audible-youtube using FastAPI and youtube-dl",
   "env": {
     "APP_NAME": {
       "description": "Word or phrase that identifies the app (used by OpenAPI)",
-      "value": "youtube-to-audio"
+      "value": "audible-youtube"
     },
     "APP_DESCRIPTION": {
       "description": "The app description (used by OpenAPI)",

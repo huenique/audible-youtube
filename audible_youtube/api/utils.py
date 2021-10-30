@@ -2,7 +2,7 @@ import asyncio
 import os
 from asyncio.events import AbstractEventLoop
 
-from youtube_to_audio.settings import FILE_EXPIRE_SECONDS
+from audible_youtube.settings import FILE_EXPIRE_SECONDS
 
 
 async def _start_download_expiration(file_path: str, event_loop: AbstractEventLoop):

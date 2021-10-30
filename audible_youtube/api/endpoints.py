@@ -6,9 +6,9 @@ from starlette.background import BackgroundTask
 from starlette.requests import Request
 from starlette.status import HTTP_404_NOT_FOUND, HTTP_500_INTERNAL_SERVER_ERROR
 
-from youtube_to_audio.api.utils import start_download_expiration
-from youtube_to_audio.models.common import TargetMedia
-from youtube_to_audio.services.youtube import YoutubeDownload
+from audible_youtube.api.utils import start_download_expiration
+from audible_youtube.models.common import TargetMedia
+from audible_youtube.services.youtube import YoutubeDownload
 
 router = APIRouter()
 ydl = YoutubeDownload()

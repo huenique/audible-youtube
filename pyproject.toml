@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "youtube-to-audio"
+name = "audible-youtube"
 version = "0.1.0"
 description = "A youtube video converter used via REST API endpoints"
 authors = ["Hju Kneyck Flores <hjucode@gmail.com>"]
@@ -34,7 +34,7 @@ profile = "black"
 typeCheckingMode = "strict"
 useLibraryCodeForTypes = true
 
-include = ["youtube_to_audio"]
+include = ["audible_youtube"]
 exclude = ["**/__pycache__"]
 
 reportMissingImports = true
