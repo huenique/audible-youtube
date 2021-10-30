@@ -30,7 +30,7 @@ RATE_LIMIT = config(
 )  # Number of requests per minute
 
 # User authentication
-SECRET_KEY = config("SECRET_KEY", cast=str)
+SECRET_KEY = config("SECRET_KEY", cast=str, default="secret")
 ALGORITHM = config("ALGORITHM", cast=str, default="HS256")
 ACCESS_TOKEN_EXPIRE_MINUTES = config(
     "ACCESS_TOKEN_EXPIRE_MINUTES", cast=int, default=30
