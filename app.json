@@ -15,7 +15,8 @@
       "value": "0.1.0"
     },
     "ALLOWED_ORIGINS": {
-      "description": "ALLOWED_ORIGINS, e.g.: Origins (domain, scheme, or port) allowed to use the app as a backend."
+      "description": "Origins (domain, scheme, or port) allowed to use the app as a backend. Allow all as default.",
+      "required": false
     },
     "MIN_CONNECTIONS_COUNT": {
       "description": "",

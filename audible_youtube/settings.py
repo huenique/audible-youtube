@@ -15,7 +15,7 @@ DEBUG = config("DEBUG", cast=bool, default=False)
 ALLOWED_ORIGINS: list[str] = config(
     "ALLOWED_ORIGINS",
     cast=CommaSeparatedStrings,
-    default="",
+    default=["*"],
 )
 
 DATABASE_URL = config("DATABASE_URL", cast=databases.DatabaseURL)
