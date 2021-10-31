@@ -1,6 +1,11 @@
 # audible-youtube
 
-Backend logic implementation for audible-youtube using FastAPI and youtube-dl.
+Backend logic implementation for audible-youtube using FastAPI and youtube-dl. audible-youtube is a service that enables other software applications to convert and download YouTube videos via REST API endpoints.
+
+Supported formats:
+
+- M4A (MPEG 4 Audio)
+- 
 
 ## Installation
 
@@ -16,59 +21,46 @@ Backend logic implementation for audible-youtube using FastAPI and youtube-dl.
 
 ## Usage
 
-**Example Python client:**
-
-```py
-import asyncio
-import urllib.request
-from http.client import HTTPResponse
-
-
-async def search(term: str) -> HTTPResponse:
-    term = "+".join(term.split(" "))
-    loop = asyncio.get_running_loop()
-    return await loop.run_in_executor(
-        None,
-        urllib.request.urlopen,
-        f"http://127.0.0.1:8000/search?term={term}",
-    )
-
-
-async def download(video: str) -> None:
-    loop = asyncio.get_running_loop()
-    await loop.run_in_executor(
-        None,
-        urllib.request.urlretrieve,
-        f"http://127.0.0.1:8000/download?video={video}",
-        "audio.m4a",
-    )
-
-
-async def main(video: str) -> None:
-    result = await search(video)
-    print(result.read().decode())
-    await download(video)
-
-
-asyncio.run(main("rick astley never gonna give you up"))
-```
-
 **Using `curl` to convert and download YouTube videos:**
 
-```
-curl -X 'GET' 'http://127.0.0.1:8000/download?video=https://www.youtube.com/watch?v=dQw4w9WgXcQ' -H 'accept: */*' --output audo_file.m4a
+First, you need to make a request to the server to convert the video:
+
+```sh
+curl -X 'GET' 'http://127.0.0.1:8000/save?video=rick+astley+never+gonna+give+you+up' -H 'accept: */*'
 ```
 
-You can also pass search terms to the video parameter:
+Example response:
+```json
+{
+  "ticket": "1a79a4d60de6718e8e5b326e338ae533",
+  "title": "Rick Astley - Never Gonna Give You Up (Official Music Video)",
+  "webpage_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+  "thumbnail": "https://i.ytimg.com/vi_webp/dQw4w9WgXcQ/maxresdefault.webp"
+}
+```
 
+Then use the `ticket` value in the response body to download your audio file:
+
+```sh
+curl -X 'GET' 'http://127.0.0.1:8000/download?ticket=1a79a4d60de6718e8e5b326e338ae533' -H 'accept: */*' --output 'audio_file.m4a'
 ```
-curl -X 'GET' 'http://127.0.0.1:8000/download?video=rick+astley+never+gonna+give+you+up' -H 'accept: */*' --output audo_file.m4a
-```
+
+| Due to limitations of external APIs, it's recommended we set an interval between the requests demonstrated above. Check out the [client example](./example/example_client.py).|
+|-----------------------------------------|
 
 **Using `curl` to search for videos:**
 
+```sh
+curl -X 'GET' 'http://127.0.0.1:8000/search?video=rick+astley+never+gonna+give+you+up' -H 'accept: */*'
 ```
-curl -X 'GET' 'http://127.0.0.1:8000/search?term=rick+astley+never+gonna+give+you+up' -H 'accept: */*'
+
+Example response:
+```json
+{
+  "title": "Rick Astley - Never Gonna Give You Up (Official Music Video)",
+  "webpage_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+  "thumbnail": "https://i.ytimg.com/vi_webp/dQw4w9WgXcQ/maxresdefault.webp"
+}
 ```
 
 ## Deployment

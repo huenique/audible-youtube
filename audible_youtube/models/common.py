@@ -5,9 +5,8 @@ from pydantic import BaseModel
 
 class TargetMedia(BaseModel):
     title: str
-    url: str
+    webpage_url: str
     thumbnail: str
-    search_term: str
 
 
 class Token(BaseModel):
