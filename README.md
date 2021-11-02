@@ -1,11 +1,11 @@
 # audible-youtube
 
-Backend logic implementation for audible-youtube using FastAPI and youtube-dl. audible-youtube is a service that enables other software applications to convert and download YouTube videos via REST API endpoints.
+Backend logic implementation for audible-youtube using FastAPI and youtube-dl. audible-youtube is a service that enables client applications to convert and download YouTube videos via REST API endpoints.
 
 Supported formats:
 
 - M4A (MPEG 4 Audio)
-- 
+-
 
 ## Installation
 
@@ -30,6 +30,7 @@ curl -X 'GET' 'http://127.0.0.1:8000/save?video=rick+astley+never+gonna+give+you
 ```
 
 Example response:
+
 ```json
 {
   "ticket": "1a79a4d60de6718e8e5b326e338ae533",
@@ -45,8 +46,8 @@ Then use the `ticket` value in the response body to download your audio file:
 curl -X 'GET' 'http://127.0.0.1:8000/download?ticket=1a79a4d60de6718e8e5b326e338ae533' -H 'accept: */*' --output 'audio_file.m4a'
 ```
 
-| Due to limitations of external APIs, it's recommended we set an interval between the requests demonstrated above. Check out the [client example](./example/example_client.py).|
-|-----------------------------------------|
+| Due to limitations of external APIs, it's recommended we set an interval between the requests demonstrated above. Check out the [client example](./example/example_client.py). |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 
 **Using `curl` to search for videos:**
 
@@ -55,6 +56,7 @@ curl -X 'GET' 'http://127.0.0.1:8000/search?video=rick+astley+never+gonna+give+y
 ```
 
 Example response:
+
 ```json
 {
   "title": "Rick Astley - Never Gonna Give You Up (Official Music Video)",
