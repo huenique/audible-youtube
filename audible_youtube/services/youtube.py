@@ -91,10 +91,6 @@ class YoutubeDownload:
 
 
 class YoutubeDownloadP(YoutubeDownload):
-    filename: str = ""
-    file_size: str = ""
-    file_path: str = ""
-
     @staticmethod
     async def search_video(search_term: str) -> Any:
         with YoutubeDLP(YDL_OPTS) as ydl:
