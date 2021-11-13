@@ -60,7 +60,7 @@ async def save(
 ) -> JSONResponse:
     try:
         ticket = await generate_ticket()
-        result = await exec_as_aio(youtube.YoutubeVideo.search_video, video)
+        result = await exec_as_aio(youtube.YoutubeDownload.search_video, video)
         title = result["title"]
 
         if (duration := result["duration"]) > MAX_VIDEO_DURATION:
@@ -69,7 +69,7 @@ async def save(
                 detail=f"video exceeds {MAX_VIDEO_DURATION} seconds: {duration}, {title}",
             )
 
-        asyncio.create_task(youtube.YoutubeVideo().save_video(video, redis, ticket))
+        asyncio.create_task(youtube.YoutubeDownload().save_video(video, redis, ticket))
         return JSONResponse(
             {
                 "ticket": ticket,
@@ -85,7 +85,7 @@ async def save(
 
 @router.get("/search", response_model=common.TargetMedia, name="Search")
 async def search(term: str, _: Request) -> common.TargetMedia:
-    result = await exec_as_aio(youtube.YoutubeVideo().search_video, term)
+    result = await exec_as_aio(youtube.YoutubeDownload().search_video, term)
     try:
         return common.TargetMedia(
             title=result["title"],
