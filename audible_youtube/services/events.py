@@ -18,4 +18,4 @@ async def close_redis_connection(app: FastAPI) -> None:
     logger.info("Closing connection to Redis server.")
     app.state.redis.close()
     pop_connection()
-    logger.info("Closed connection to Redis server.")
+    logger.info("Closed connection to redis server.")

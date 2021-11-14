@@ -83,9 +83,7 @@ class YoutubeDownload:
 
     async def save_video(self, video: str, redis: Redis, ticket: str) -> None:
         loop = asyncio.get_running_loop()
-        await loop.run_in_executor(
-            None, self.download_video, video, redis, ticket, loop
-        )
+        await loop.run_in_executor(None, self.download_video, video)
         await self.set_ticket(redis, ticket)
         await self.set_file_expiration()
 

@@ -4,7 +4,7 @@ import os
 from aioredis.client import Redis
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import FileResponse
-from starlette.background import BackgroundTask
+from starlette.background import BackgroundTasks
 from starlette.requests import Request
 from starlette.responses import JSONResponse
 from starlette.status import (
@@ -20,14 +20,31 @@ from audible_youtube.services import redis as _redis
 from audible_youtube.services import youtube
 from audible_youtube.utils import exec_as_aio, file_exists, generate_ticket
 
-MAX_VIDEO_DURATION = 600
+MAX_VIDEO_DURATION = 900
 
 router = APIRouter()
 
 
+@router.get("/convert", name="convert")
+async def convert(video: str, _: Request, bg_tasks: BackgroundTasks) -> FileResponse:
+    media = youtube.YoutubeDownloadP()
+    await media.download_video(video)
+    bg_tasks.add_task(os.unlink, media.file_path)  # type: ignore
+
+    return FileResponse(
+        media.file_path,
+        media_type="audio/m4a",
+        background=bg_tasks,
+        filename=media.filename,
+    )
+
+
 @router.get("/download", name="Download")
 async def download(
-    ticket: str, _: Request, redis: Redis = Depends(get_redis_connection)
+    ticket: str,
+    _: Request,
+    bg_tasks: BackgroundTasks,
+    redis: Redis = Depends(get_redis_connection),
 ) -> FileResponse:
     file = await _redis.get_dict(redis, ticket, ("file_path", "filename"))
 
@@ -46,10 +63,12 @@ async def download(
             detail=f"{ticket}'s file is missing or removed from filesystem",
         )
 
+    bg_tasks.add_task(os.unlink, file_path)  # type: ignore
+
     return FileResponse(
         file_path,
         media_type="audio/m4a",
-        background=BackgroundTask(os.unlink, file_path),
+        background=bg_tasks,
         filename=filename,
     )
 
