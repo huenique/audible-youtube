@@ -1,11 +1,13 @@
 import asyncio
 import os
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 from aioredis.client import Redis
 from youtube_dl import YoutubeDL
 from youtube_dl.utils import DownloadError
+from youtubesearchpython import VideosSearch
+from youtubesearchpython.__future__ import VideosSearch as AioVideosSearch
 from yt_dlp import YoutubeDL as YoutubeDLP
 from yt_dlp.utils import DownloadError as DownloadErrorP
 
@@ -42,13 +44,7 @@ class YoutubeDownload:
 
     @staticmethod
     def search_video(search_term: str) -> Any:
-        with YoutubeDL(YDL_OPTS) as ydl:
-            result: Optional[dict[str, Any]] = None
-            result = ydl.extract_info(  # type: ignore
-                f"ytsearch:{search_term}", download=False
-            )
-            assert result is not None
-            return result["entries"][0]
+        return VideosSearch(search_term, limit=1).result()  # type: ignore
 
     async def set_file_expiration(self) -> None:
         asyncio.create_task(
@@ -91,13 +87,7 @@ class YoutubeDownload:
 class YoutubeDownloadP(YoutubeDownload):
     @staticmethod
     async def search_video(search_term: str) -> Any:
-        with YoutubeDLP(YDL_OPTS) as ydl:
-            result: Optional[dict[str, Any]] = None
-            result = ydl.extract_info(  # type: ignore
-                f"ytsearch:{search_term}", download=False
-            )
-            assert result is not None
-            return result["entries"][0]
+        return await AioVideosSearch(search_term, limit=1).next()  # type: ignore
 
     async def download_video(self, url: str) -> Any:
         url = self.parse_url_str(url)
@@ -109,4 +99,4 @@ class YoutubeDownloadP(YoutubeDownload):
         except DownloadErrorP:
             result = await self.search_video(url)
             if result is not None:
-                await self.download_video(result["webpage_url"])
+                await self.download_video(result["result"][0]["link"])

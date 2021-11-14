@@ -21,6 +21,7 @@ gunicorn = "^20.1.0"
 rq = "^1.10.0"
 aioredis = {extras = ["hiredis"], version = "^2.0.0"}
 yt-dlp = "^2021.11.10"
+youtube-search-python = "^1.5.1"
 
 [tool.poetry.dev-dependencies]
 pyright = "^0.0.10"
