@@ -21,49 +21,56 @@ Supported formats:
 
 ## Usage
 
-**Using `curl` to convert and download YouTube videos:**
+- ### Convert and Download Videos
 
-First, you need to make a request to the server to convert the video:
+  1. `/convert` (Fast option)
 
-```sh
-curl -X 'GET' 'http://127.0.0.1:8000/save?video=rick+astley+never+gonna+give+you+up' -H 'accept: */*'
-```
+     ```sh
+     curl -X 'GET' 'http://127.0.0.1:8000/save?video=rick+astley+never+gonna+give+you+up' --output 'audio_file.m4a'
+     ```
 
-Example response:
+  2. `/save` & `/download` (Slow option)
 
-```json
-{
-  "ticket": "1a79a4d60de6718e8e5b326e338ae533",
-  "title": "Rick Astley - Never Gonna Give You Up (Official Music Video)",
-  "webpage_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-  "thumbnail": "https://i.ytimg.com/vi_webp/dQw4w9WgXcQ/maxresdefault.webp"
-}
-```
+     First, make a request to the server to convert the video:
 
-Then use the `ticket` value in the response body to download your audio file:
+     ```sh
+     curl -X 'GET' 'http://127.0.0.1:8000/save?video=rick+astley+never+gonna+give+you+up' -H 'accept: */*'
+     ```
 
-```sh
-curl -X 'GET' 'http://127.0.0.1:8000/download?ticket=1a79a4d60de6718e8e5b326e338ae533' -H 'accept: */*' --output 'audio_file.m4a'
-```
+     Example response:
 
-| Due to limitations of external APIs, it's recommended we set an interval between the requests demonstrated above. Check out the [client example](./example/example_client.py). |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+     ```json
+     {
+       "ticket": "1a79a4d60de6718e8e5b326e338ae533",
+       "title": "Rick Astley - Never Gonna Give You Up (Official Music Video)",
+       "webpage_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+       "thumbnail": "https://i.ytimg.com/vi_webp/dQw4w9WgXcQ/maxresdefault.webp"
+     }
+     ```
 
-**Using `curl` to search for videos:**
+     Then, use the `ticket` value in the response body to download your audio file:
 
-```sh
-curl -X 'GET' 'http://127.0.0.1:8000/search?video=rick+astley+never+gonna+give+you+up' -H 'accept: */*'
-```
+     ```sh
+     curl -X 'GET' 'http://127.0.0.1:8000/download?ticket=1a79a4d60de6718e8e5b326e338ae533' -H 'accept: */*' --output 'audio_file.m4a'
+     ```
 
-Example response:
+  > Check out the [client example](./example/example_client.py).
 
-```json
-{
-  "title": "Rick Astley - Never Gonna Give You Up (Official Music Video)",
-  "webpage_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-  "thumbnail": "https://i.ytimg.com/vi_webp/dQw4w9WgXcQ/maxresdefault.webp"
-}
-```
+- ### Search Videos
+
+  ```sh
+  curl -X 'GET' 'http://127.0.0.1:8000/search?video=rick+astley+never+gonna+give+you+up' -H 'accept: */*'
+  ```
+
+  Example response:
+
+  ```json
+  {
+    "title": "Rick Astley - Never Gonna Give You Up (Official Music Video)",
+    "webpage_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    "thumbnail": "https://i.ytimg.com/vi_webp/dQw4w9WgXcQ/maxresdefault.webp"
+  }
+  ```
 
 ## Deployment
 
