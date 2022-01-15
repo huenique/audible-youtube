@@ -1,6 +1,6 @@
 # audible-youtube
 
-Backend logic implementation for audible-youtube using FastAPI and youtube-dl. audible-youtube is a service that enables client applications to convert and download YouTube videos via REST API endpoints.
+audible-youtube is a backend service that enables frontend or client applications to convert and download YouTube videos via REST API endpoints.
 
 Supported formats:
 
@@ -21,56 +21,56 @@ Supported formats:
 
 ## Usage
 
-- ### Convert and Download Videos
+### Convert and Download Videos
 
-  1. `/convert` (Fast option)
+1. `/convert` (Fast option)
 
-     ```sh
-     curl -X 'GET' 'http://127.0.0.1:8000/save?video=rick+astley+never+gonna+give+you+up' --output 'audio_file.m4a'
-     ```
+   ```sh
+   curl -X 'GET' 'http://127.0.0.1:8000/save?video=rick+astley+never+gonna+give+you+up' --output 'audio_file.m4a'
+   ```
 
-  2. `/save` & `/download` (Slow option)
+2. `/save` & `/download` (Slow option)
 
-     First, make a request to the server to convert the video:
+   First, make a request to the server to convert the video:
 
-     ```sh
-     curl -X 'GET' 'http://127.0.0.1:8000/save?video=rick+astley+never+gonna+give+you+up' -H 'accept: */*'
-     ```
+   ```sh
+   curl -X 'GET' 'http://127.0.0.1:8000/save?video=rick+astley+never+gonna+give+you+up' -H 'accept: */*'
+   ```
 
-     Example response:
+   Example response:
 
-     ```json
-     {
-       "ticket": "1a79a4d60de6718e8e5b326e338ae533",
-       "title": "Rick Astley - Never Gonna Give You Up (Official Music Video)",
-       "webpage_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-       "thumbnail": "https://i.ytimg.com/vi_webp/dQw4w9WgXcQ/maxresdefault.webp"
-     }
-     ```
+   ```json
+   {
+     "ticket": "1a79a4d60de6718e8e5b326e338ae533",
+     "title": "Rick Astley - Never Gonna Give You Up (Official Music Video)",
+     "webpage_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+     "thumbnail": "https://i.ytimg.com/vi_webp/dQw4w9WgXcQ/maxresdefault.webp"
+   }
+   ```
 
-     Then, use the `ticket` value in the response body to download your audio file:
+   Then, use the `ticket` value in the response body to download your audio file:
 
-     ```sh
-     curl -X 'GET' 'http://127.0.0.1:8000/download?ticket=1a79a4d60de6718e8e5b326e338ae533' -H 'accept: */*' --output 'audio_file.m4a'
-     ```
+   ```sh
+   curl -X 'GET' 'http://127.0.0.1:8000/download?ticket=1a79a4d60de6718e8e5b326e338ae533' -H 'accept: */*' --output 'audio_file.m4a'
+   ```
 
-  > Check out the [client example](./example/example_client.py).
+> Check out the [client example](./example/example_client.py).
 
-- ### Search Videos
+### Search Videos
 
-  ```sh
-  curl -X 'GET' 'http://127.0.0.1:8000/search?video=rick+astley+never+gonna+give+you+up' -H 'accept: */*'
-  ```
+```sh
+curl -X 'GET' 'http://127.0.0.1:8000/search?video=rick+astley+never+gonna+give+you+up' -H 'accept: */*'
+```
 
-  Example response:
+Example response:
 
-  ```json
-  {
-    "title": "Rick Astley - Never Gonna Give You Up (Official Music Video)",
-    "webpage_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-    "thumbnail": "https://i.ytimg.com/vi_webp/dQw4w9WgXcQ/maxresdefault.webp"
-  }
-  ```
+```json
+{
+  "title": "Rick Astley - Never Gonna Give You Up (Official Music Video)",
+  "webpage_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+  "thumbnail": "https://i.ytimg.com/vi_webp/dQw4w9WgXcQ/maxresdefault.webp"
+}
+```
 
 ## Deployment
 
