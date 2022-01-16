@@ -40,7 +40,7 @@ profile = "black"
 typeCheckingMode = "strict"
 useLibraryCodeForTypes = true
 
-include = ["audible_youtube"]
+include = ["app"]
 exclude = ["**/__pycache__"]
 
 reportMissingImports = true

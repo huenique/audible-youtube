@@ -32,8 +32,8 @@ clean-pyc: ## remove Python file artifacts
 	find . -name '__pycache__' -exec rm -fr {} +
 
 lint: ## check style with flake8
-	flake8 audible_youtube
-	pylint audible_youtube
+	flake8 app
+	pylint app
 
 dist: clean ## build source and wheel package
 	poetry build
@@ -44,10 +44,10 @@ install: clean ## install the package to the active Python's site-packages
 format: format-black format-import ## format codebase using standard formatters
 
 format-black: ## format code using black
-	black audible_youtube/
+	black app/
 
 format-import: ## sort imports in codebase
-	isort audible_youtube/
+	isort app/
 
 setup-dev: ## setup development environment
 	poetry shell
