@@ -14,11 +14,11 @@ from starlette.status import (
     HTTP_507_INSUFFICIENT_STORAGE,
 )
 
-from audible_youtube.api.dependencies import get_redis_connection
-from audible_youtube.models import common
-from audible_youtube.services import redis as _redis
-from audible_youtube.services import youtube
-from audible_youtube.utils import exec_as_aio, file_exists, generate_ticket
+from app.api.dependencies import get_redis_connection
+from app.models import common
+from app.services import redis as _redis
+from app.services import youtube
+from app.utils import exec_as_aio, file_exists, generate_ticket
 
 MAX_VIDEO_DURATION = 900
 

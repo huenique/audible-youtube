@@ -4,7 +4,7 @@ from loguru import logger
 from redis import Redis as _Redis
 from rq import Queue, pop_connection
 
-from audible_youtube.settings import REDIS_URL
+from app.settings import REDIS_URL
 
 
 async def connect_to_redis(app: FastAPI) -> None:

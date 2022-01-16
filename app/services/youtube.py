@@ -11,9 +11,9 @@ from youtubesearchpython.__future__ import VideosSearch as AioVideosSearch
 from yt_dlp import YoutubeDL as YoutubeDLP
 from yt_dlp.utils import DownloadError as DownloadErrorP
 
-from audible_youtube.services.redis import set_dict
-from audible_youtube.settings import BASE_DIR, MEDIA_ROOT
-from audible_youtube.utils import start_download_expiration
+from app.services.redis import set_dict
+from app.settings import BASE_DIR, MEDIA_ROOT
+from app.utils import start_download_expiration
 
 YOUTUBE_URL = "https://youtube.com"
 FILE_DIR = "{BASE_DIR},{MEDIA_ROOT}"

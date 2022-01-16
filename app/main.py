@@ -7,13 +7,13 @@ from slowapi.middleware import SlowAPIMiddleware
 from slowapi.util import get_remote_address
 from starlette.exceptions import HTTPException
 
-from audible_youtube.api.errors import http_error_handler
-from audible_youtube.api.routes import router as api_router
-from audible_youtube.core.events import (
+from app.api.errors import http_error_handler
+from app.api.routes import router as api_router
+from app.core.events import (
     create_start_app_handler,
     create_stop_app_handler,
 )
-from audible_youtube.settings import (
+from app.settings import (
     ALLOWED_ORIGINS,
     APP_DESCRIPTION,
     APP_NAME,

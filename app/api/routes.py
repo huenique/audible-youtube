@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from audible_youtube.api import endpoints
+from app.api import endpoints
 
 router = APIRouter()
 router.include_router(endpoints.router)
