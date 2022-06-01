@@ -9,10 +9,7 @@ from starlette.exceptions import HTTPException
 
 from app.api.errors import http_error_handler
 from app.api.routes import router as api_router
-from app.core.events import (
-    create_start_app_handler,
-    create_stop_app_handler,
-)
+from app.core.events import create_start_app_handler, create_stop_app_handler
 from app.settings import (
     ALLOWED_ORIGINS,
     APP_DESCRIPTION,

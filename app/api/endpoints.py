@@ -25,28 +25,28 @@ MAX_VIDEO_DURATION = 900
 router = APIRouter()
 
 
-@router.get("/convert", name="convert")
-async def convert(video: str, _: Request, bg_tasks: BackgroundTasks) -> FileResponse:
+@router.get("/download", name="Download")
+async def download(video: str, _: Request, bg_tasks: BackgroundTasks) -> FileResponse:
     media = youtube.YoutubeDownloadP()
     await media.download_video(video)
-    bg_tasks.add_task(os.unlink, media.file_path)  # type: ignore
+    bg_tasks.add_task(os.unlink, media.path)  # type: ignore
 
     return FileResponse(
-        media.file_path,
+        media.file_download.path,
         media_type="audio/m4a",
         background=bg_tasks,
-        filename=media.filename,
+        filename=media.file_download.name,
     )
 
 
-@router.get("/download", name="Download")
-async def download(
+@router.get("/save", name="Save")
+async def save(
     ticket: str,
     _: Request,
     bg_tasks: BackgroundTasks,
     redis: Redis = Depends(get_redis_connection),
 ) -> FileResponse:
-    file = await _redis.get_dict(redis, ticket, ("file_path", "filename"))
+    file = await _redis.get_dict(redis, ticket, ("path", "name"))
 
     if all(value is None for value in file):
         raise HTTPException(
@@ -55,26 +55,26 @@ async def download(
         )
 
     file = [value.decode("utf-8") for value in file]
-    file_path, filename = file[0], file[1]
+    path, name = file[0], file[1]
 
-    if not await file_exists(file_path):
+    if not await file_exists(path):
         raise HTTPException(
             status_code=HTTP_404_NOT_FOUND,
             detail=f"{ticket}'s file is missing or removed from filesystem",
         )
 
-    bg_tasks.add_task(os.unlink, file_path)  # type: ignore
+    bg_tasks.add_task(os.unlink, path)  # type: ignore
 
     return FileResponse(
-        file_path,
+        path,
         media_type="audio/m4a",
         background=bg_tasks,
-        filename=filename,
+        filename=name,
     )
 
 
-@router.get("/save", name="Save")
-async def save(
+@router.get("/convert", name="Convert")
+async def convert(
     video: str, _: Request, redis: Redis = Depends(get_redis_connection)
 ) -> JSONResponse:
     try:
@@ -88,7 +88,10 @@ async def save(
                 detail=f"video exceeds {MAX_VIDEO_DURATION} seconds: {duration}, {title}",
             )
 
-        asyncio.create_task(youtube.YoutubeDownload().save_video(video, redis, ticket))
+        asyncio.create_task(
+            youtube.YoutubeDownload().convert_video(video, redis, ticket)
+        )
+
         return JSONResponse(
             {
                 "ticket": ticket,
@@ -105,6 +108,7 @@ async def save(
 @router.get("/search", response_model=common.TargetMedia, name="Search")
 async def search(term: str, _: Request) -> common.TargetMedia:
     result = await exec_as_aio(youtube.YoutubeDownload().search_video, term)
+
     try:
         return common.TargetMedia(
             title=result["title"],
