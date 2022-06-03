@@ -33,7 +33,7 @@ Supported formats:
 1. `/download` (**Fast option/Recommended**)
 
    ```sh
-   curl -X 'GET' 'http://127.0.0.1:8000/save?video=rick+astley+never+gonna+give+you+up' --output 'audio_file.m4a'
+   curl -X 'GET' 'http://127.0.0.1:8000/download?video=rick+astley+never+gonna+give+you+up' --output 'audio_file.m4a'
    ```
 
 2. `/convert` & `/save` (Slow option)
