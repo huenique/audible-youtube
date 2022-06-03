@@ -32,9 +32,15 @@ Supported audio formats:
 
 1. `/download` (**Fast option/Recommended**)
 
+    Simply make a GET request to the `/download` path with your search term in the query parameter.
+
+    ```
+    /download?query=your+search+term
+    ```
+
     ```sh
     curl -X 'GET' \
-    'http://127.0.0.1:8000/download?video=rick+astley+never+gonna+give+you+up' \
+    'http://127.0.0.1:8000/download?query=rick+astley+never+gonna+give+you+up' \
       -H 'accept: application/json' \
       -o 'your_audio_file.m4a'
     ```
@@ -45,9 +51,13 @@ Supported audio formats:
 
     First, make a request to the server to convert the video.
 
+    ```
+    /convert?query=your+search+term
+    ```
+
     ```sh
     curl -X 'GET' \
-      'http://127.0.0.1:8000/convert?video=rick+astley+never+gonna+give+you+up' \
+      'http://127.0.0.1:8000/convert?query=rick+astley+never+gonna+give+you+up' \
       -H 'accept: application/json'
     ```
 
@@ -74,6 +84,10 @@ Supported audio formats:
     ```
 
     Then use the value of the `ticket` key in the JSON response to download your audio file.
+
+    ```
+    /save?ticket=your+assigned+ticket
+    ```
 
     ```sh
     curl -X 'GET' \
@@ -103,17 +117,36 @@ Supported audio formats:
 ### Search Videos
 
 Simply make a GET request to the `/search` path and pass the search term as a query string.
+
+```
+/search?query=your+search+term
+```
+
 ```sh
 curl -X 'GET' \
-  'http://127.0.0.1:8000/search?term=rick+astley+never+gonna+give+you+up' \
+  'http://127.0.0.1:8000/search?query=rick+astley+never+gonna+give+you+up' \
   -H 'accept: application/json'
 ```
 
 Example JSON response:
+<details>
+<summary><b>Show Example</b></summary>
+<br>
+<table>
+<tr>
+<td>
 
 ```json
 {
   "title": "Rick Astley - Never Gonna Give You Up (Official Music Video)",
+  "id": "Rick Astley - Never Gonna Give You Up (Official Music Video)",
+  "publication_time": "Rick Astley - Never Gonna Give You Up (Official Music Video)",
+  "type": "video",
+  "duration": "3:33",
+  "viewcount": {
+    "text": "1,224,529,631 views",
+    "short": "1.2B views"
+  },
   "link": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
   "thumbnails": [
     {
@@ -126,9 +159,42 @@ Example JSON response:
       "width": "720",
       "height": "404"
     }
-  ]
+  ],
+  "description": [
+    {
+      "text": "“"
+    },
+    {
+      "text": "Never",
+      "bold": "True"
+    },
+    {
+      "text": " Gonna Give You Up” was a global smash on its release in July 1987, topping the charts in 25 countries including Rick's ..."
+    }
+  ],
+  "channel": {
+    "name": "Rick Astley",
+    "id": "UCuAXFkgsw1L7xaCfnd5JJOw",
+    "thumbnails": [
+      {
+        "url": "https://yt3.ggpht.com/BbWaWU-qyR5nfxxXclxsI8zepppYL5x1agIPGfRdXFm5fPEewDsRRWg4x6P6fdKNhj84GoUpUI4=s88-c-k-c0x00ffffff-no-rj",
+        "width": "68",
+        "height": "68"
+      }
+    ],
+    "link": "https://www.youtube.com/channel/UCuAXFkgsw1L7xaCfnd5JJOw"
+  },
+  "accessibility": {
+    "title": "Rick Astley - Never Gonna Give You Up (Official Music Video) by Rick Astley 12 years ago 3 minutes, 33 seconds 1,224,529,631 views",
+    "duration": "3 minutes, 33 seconds"
+  }
 }
 ```
+</td>
+</tr>
+</table>
+</details>
+<br>
 
 ## Deployment
 

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 1.1.0-alpha.2 (2022-06-03)
+
+
+### Features
+
+* add more video metadata to `/search` response ([9568ca6](https://github.com/huenique/audible-youtube/commit/9568ca63084c49fcafbc0ffa5b40ff8cb023d291))
+
 ## 1.1.0-alpha.1 (2022-06-03)
 
 
@@ -22,8 +29,6 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### Bug Fixes
 
-* add default `SECRET_KEY` ([7db99af](https://github.com/huenique/audible-youtube/commit/7db99aff8828d2c18b8986105517e305bc0466d3))
-* handle download files on client disconnections ([dceb636](https://github.com/huenique/audible-youtube/commit/dceb6367c53ea63f490dfabc1548d6a447d90938))
 * integrate redis and task queues ([ff9c500](https://github.com/huenique/audible-youtube/commit/ff9c500fa7fd32a183b87efc44dfd5350a77f44e))
 * resolve err caused by previous changes ([b75ed62](https://github.com/huenique/audible-youtube/commit/b75ed627fdca5b100af115b6577ae886196eb16a))
 * restore slow option ([a278b49](https://github.com/huenique/audible-youtube/commit/a278b493cdda60d0dd181f38e8cf185ae35fae26))
