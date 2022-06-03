@@ -51,7 +51,7 @@ sniffio==1.2.0; python_version >= "3.6" and python_full_version >= "3.6.2"
 sqlalchemy==1.4.31; python_version >= "3.6" and python_full_version < "3.0.0" or python_full_version >= "3.6.0" and python_version >= "3.6"
 starlette==0.16.0; python_version >= "3.6" and python_full_version >= "3.6.1"
 typing-extensions==4.0.1; python_version >= "3.6" and python_full_version >= "3.6.1"
-ujson==4.3.0; python_full_version >= "3.6.1" and python_version >= "3.6"
+ujson==5.2.0; python_full_version >= "3.6.1" and python_version >= "3.6"
 urllib3==1.26.8; python_full_version >= "3.6.1" and python_version < "4"
 uvicorn==0.15.0
 uvloop==0.16.0
