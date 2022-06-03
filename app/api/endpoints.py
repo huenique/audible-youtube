@@ -137,11 +137,74 @@ async def search(
     result = await _validate_query_result(result["result"], query)
     result = result[0]
 
+    print(result)
+
+    {
+        "type": "video",
+        "id": "AGCL3icu9dk",
+        "title": "Mitski - Me and My Husband (Lyric Video)",
+        "publishedTime": "1 year ago",
+        "duration": "2:18",
+        "viewCount": {"text": "7,104,191 views", "short": "7.1M views"},
+        "thumbnails": [
+            {
+                "url": "https://i.ytimg.com/vi/AGCL3icu9dk/hq720.jpg?sqp=-oaymwEcCOgCEMoBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLC2SI860nxP56NUy2svpFdgO3jCjg",
+                "width": 360,
+                "height": 202,
+            },
+            {
+                "url": "https://i.ytimg.com/vi/AGCL3icu9dk/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLC4diDjerHdNfVQq9yHC4NsNLdxtQ",
+                "width": 720,
+                "height": 404,
+            },
+        ],
+        "richThumbnail": {
+            "url": "https://i.ytimg.com/an_webp/AGCL3icu9dk/mqdefault_6s.webp?du=3000&sqp=CM7m6JQG&rs=AOn4CLCDLP6AFDNqVJ-noA8Pu9BfcKJctQ",
+            "width": 320,
+            "height": 180,
+        },
+        "descriptionSnippet": [
+            {"text": "Lyrics: "},
+            {"text": "I", "bold": True},
+            {"text": " steal a few breaths from the world for a minute And then "},
+            {"text": "I", "bold": True},
+            {"text": "'ll be nothing forever And all of "},
+            {"text": "my", "bold": True},
+            {"text": " memories And all of the things\xa0..."},
+        ],
+        "channel": {
+            "name": "Dead Oceans",
+            "id": "UCNa3uC5LqiRHOnv5b4MZ36g",
+            "thumbnails": [
+                {
+                    "url": "https://yt3.ggpht.com/ytc/AKedOLSVCLGIQfwXe312OqW2KDifLk3ibb4l16pJpQrU=s68-c-k-c0x00ffffff-no-rj",
+                    "width": 68,
+                    "height": 68,
+                }
+            ],
+            "link": "https://www.youtube.com/channel/UCNa3uC5LqiRHOnv5b4MZ36g",
+        },
+        "accessibility": {
+            "title": "Mitski - Me and My Husband (Lyric Video) by Dead Oceans 1 year ago 2 minutes, 18 seconds 7,104,191 views",
+            "duration": "2 minutes, 18 seconds",
+        },
+        "link": "https://www.youtube.com/watch?v=AGCL3icu9dk",
+        "shelfTitle": None,
+    }
+
     try:
         return common.TargetMedia(
             title=result["title"],
+            id=result["title"],
+            type=result["type"],
+            publication_time=result["title"],
+            duration=result["duration"],
+            viewcount=result["viewCount"],
             link=result["link"],
             thumbnails=result["thumbnails"],
+            description=result["descriptionSnippet"],
+            channel=result["channel"],
+            accessibility=result["accessibility"],
         )
     except KeyError as key_err:
         raise HTTPException(status_code=HTTP_500_INTERNAL_SERVER_ERROR) from key_err
