@@ -24,11 +24,11 @@ youtube_dl = "^2021.6.6"
 yt-dlp = "^2021.11.10"
 
 [tool.poetry.dev-dependencies]
+black = "^22.3.0"
 flake8 = "^4.0.1"
 isort = "^5.9.3"
 pylint = "^2.11.1"
 pyright = "^0.0.10"
-black = "^22.3.0"
 
 [tool.black]
 target-version = ["py39"]
