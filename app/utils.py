@@ -29,7 +29,7 @@ async def file_exists(path: str) -> bool:
     return await exec_as_aio(os.path.isfile, path)
 
 
-async def valid_duration(time: str, postion: int, max: int) -> bool:
+async def validate_duration(time: str, postion: int, max: int) -> bool:
     """Check if the duration of the media is less than or equal to the specified
     maximum value.
 

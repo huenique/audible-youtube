@@ -17,24 +17,37 @@ from app.api.dependencies import get_redis_connection
 from app.models import common
 from app.services import redis as _redis
 from app.services import youtube
-from app.utils import file_exists, generate_ticket, valid_duration
+from app.utils import file_exists, generate_ticket, validate_duration
 
 MAX_VIDEO_DURATION = 900
 
 router = APIRouter()
 
 
+async def _validate_duration(duration: str, title: str) -> None:
+    if not await validate_duration(duration, 1, MAX_VIDEO_DURATION):
+        raise HTTPException(
+            status_code=HTTP_507_INSUFFICIENT_STORAGE,
+            detail=f"video exceeds {MAX_VIDEO_DURATION} seconds: {duration}, {title}",
+        )
+
+
 @router.get("/download", name="Download")
 async def download(video: str, _: Request, bg_tasks: BackgroundTasks) -> FileResponse:
-    media = youtube.YoutubeDownloadPlus()
-    await media.download_video(video)
-    bg_tasks.add_task(os.unlink, media.file_download.path)  # type: ignore
+    download = youtube.YoutubeDownloadPlus()
+    result = await download.search_video(video)
+    result = result["result"][0]
+
+    await _validate_duration(result["duration"], result["title"])
+    await download.download_video(video)
+
+    bg_tasks.add_task(os.unlink, download.file_download.path)  # type: ignore
 
     return FileResponse(
-        media.file_download.path,
+        download.file_download.path,
         media_type="audio/m4a",
         background=bg_tasks,
-        filename=media.file_download.name,
+        filename=download.file_download.name,
     )
 
 
@@ -81,13 +94,8 @@ async def convert(
         result = await youtube.YoutubeDownloadPlus.search_video(video)
         result = result["result"][0]
         title = result["title"]
-        duration = result["duration"]
 
-        if not await valid_duration(duration, 1, MAX_VIDEO_DURATION):
-            raise HTTPException(
-                status_code=HTTP_507_INSUFFICIENT_STORAGE,
-                detail=f"video exceeds {MAX_VIDEO_DURATION} seconds: {duration}, {title}",
-            )
+        await _validate_duration(result["duration"], title)
 
         asyncio.create_task(
             youtube.YoutubeDownload().convert_video(video, redis, ticket)
