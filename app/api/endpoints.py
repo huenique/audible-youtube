@@ -28,7 +28,7 @@ router = APIRouter()
 async def download(video: str, _: Request, bg_tasks: BackgroundTasks) -> FileResponse:
     media = youtube.YoutubeDownloadPlus()
     await media.download_video(video)
-    bg_tasks.add_task(os.unlink, media.path)  # type: ignore
+    bg_tasks.add_task(os.unlink, media.file_download.path)  # type: ignore
 
     return FileResponse(
         media.file_download.path,
