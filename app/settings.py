@@ -6,12 +6,14 @@ from starlette.datastructures import CommaSeparatedStrings
 
 config = Config(".env")
 
-APP_NAME = config("APP_NAME", cast=str, default="")
+# Global vars used by OpenAPI
+APP_NAME = "audible-youtube"
 
-APP_DESCRIPTION = config("APP_DESCRIPTION", cast=str, default="")
+APP_DESCRIPTION = "Convert YouTube videos to audio files using REST API endpoints"
 
-APP_VERSION = config("APP_VERSION", cast=str, default="")
+APP_VERSION = "1.1.0-alpha.0"
 
+# Secrets or env settings
 DEBUG = config("DEBUG", cast=bool, default=False)
 
 ALLOWED_ORIGINS: list[str] = config(
@@ -28,7 +30,6 @@ MIN_CONNECTIONS_COUNT = config("MIN_CONNECTIONS_COUNT", cast=int, default=10)
 
 REDIS_URL = config("REDIS_URL")
 
-# Rate limiter
 RATE_LIMIT = config(
     "RATE_LIMIT", cast=str, default="5/minute"  # Number of requests per minute
 )

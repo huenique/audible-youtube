@@ -75,7 +75,6 @@ async def save(
     bg_tasks: BackgroundTasks,
     redis: Redis = Depends(get_redis_connection),
 ) -> FileResponse:
-    print("here")
     file = await redis_.get_dict(redis, ticket, ("path", "name"))
 
     if all(value == b"" for value in file):
