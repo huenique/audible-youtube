@@ -4,7 +4,7 @@ audible-youtube is a backend service that enables application softwares to conve
 
 The project's aims to decouple and eliminate the overhead of converting YouTube videos to audio files from other apps or services.
 
-Supported formats:
+Supported audio formats:
 
 - M4A (MPEG 4 Audio)
 -
@@ -12,7 +12,7 @@ Supported formats:
 > Test it here: https://audible-youtube.herokuapp.com/docs
 
 ## Technologies
-> Please check the dependencies listed in the [pyproject.toml](pyproject.toml) file
+> Please refer to the dependencies section in the [pyproject.toml](pyproject.toml) file.
 
 ## Installation
 
@@ -23,7 +23,7 @@ Supported formats:
 1. `cd` into the project directory, e.g. audible-youtube.
 2. Inside the project's root directory, run `poetry shell`. This will create or start the virtual environment. Make sure [poetry](https://github.com/python-poetry/poetry#installation) is installed.
 3. Run `poetry install`. This will install the project and its dependencies.
-4. Run the app: `uvicorn audible_youtube.main:app`.
+4. Run the app: `uvicorn app.main:app`.
 5. Go to `http://127.0.0.1:8000/docs`
 
 ## Usage
@@ -32,50 +32,101 @@ Supported formats:
 
 1. `/download` (**Fast option/Recommended**)
 
-   ```sh
-   curl -X 'GET' 'http://127.0.0.1:8000/download?video=rick+astley+never+gonna+give+you+up' --output 'audio_file.m4a'
-   ```
+    ```sh
+    curl -X 'GET' \
+    'http://127.0.0.1:8000/download?video=rick+astley+never+gonna+give+you+up' \
+      -H 'accept: application/json' \
+      -o 'your_audio_file.m4a'
+    ```
+
+    >
 
 2. `/convert` & `/save` (Slow option)
 
-   First, make a request to the server to convert the video:
+    First, make a request to the server to convert the video.
 
-   ```sh
-   curl -X 'GET' 'http://127.0.0.1:8000/convert?video=rick+astley+never+gonna+give+you+up' -H 'accept: */*'
-   ```
+    ```sh
+    curl -X 'GET' \
+      'http://127.0.0.1:8000/convert?video=rick+astley+never+gonna+give+you+up' \
+      -H 'accept: application/json'
+    ```
 
-   Example response:
+    Example JSON response:
 
-   ```json
-   {
-     "ticket": "1a79a4d60de6718e8e5b326e338ae533",
-     "title": "Rick Astley - Never Gonna Give You Up (Official Music Video)",
-     "webpage_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-     "thumbnail": "https://i.ytimg.com/vi_webp/dQw4w9WgXcQ/maxresdefault.webp"
-   }
-   ```
+    ```json
+    {
+      "ticket":"7aa156139564bd03b63178ec2ddffb27",
+      "title":"Rick Astley - Never Gonna Give You Up (Official Music Video)",
+      "link":"https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      "thumbnails":[
+        {
+          "url":"https://i.ytimg.com/vi/dQw4w9WgXcQ/hq720.jpg?sqp=-oaymwEcCOgCEMoBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAfut6ib46TKYWnNm5PxBrcX8HLWg",
+          "width":"360",
+          "height":"202"
+        },
+        {
+          "url":"https://i.ytimg.com/vi/dQw4w9WgXcQ/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLDRxusbm2_TGTnDWEIhBTYW2cUQkw",
+          "width":"720",
+          "height":"404"
+        }
+      ]
+    }
+    ```
 
-   Then, use the `ticket` value in the response body to download your audio file:
+    Then use the value of the `ticket` key in the JSON response to download your audio file.
 
-   ```sh
-   curl -X 'GET' 'http://127.0.0.1:8000/save?ticket=1a79a4d60de6718e8e5b326e338ae533' -H 'accept: */*' --output 'audio_file.m4a'
-   ```
+    ```sh
+    curl -X 'GET' \
+    'http://127.0.0.1:8000/save?ticket=7aa156139564bd03b63178ec2ddffb27' \
+        -H 'accept: application/json' \
+        -o 'your_audio_file.m4a'
+    ```
 
-> Check out the [client example](./example/example_client.py).
+    Your file is likely not ready if the response or file content looks like this:
+
+    ```json
+    {
+      "errors":[
+          "7aa156139564bd03b63178ec2ddffb27 is not ready. Please wait and resubmit your request"
+      ]
+    }
+    ```
+
+    If you get the above error, try again shortly.
+
+> **IMPORTANT NOTES:**
+> - The system rate limits requests to 5 per minute.
+> - A file is set expire after 2 minutes or once you finish downloading it.
+
+> **Check out the [client examples](./example).**
 
 ### Search Videos
 
+Simply make a GET request to the `/search` path and pass the search term as a query string.
 ```sh
-curl -X 'GET' 'http://127.0.0.1:8000/search?video=rick+astley+never+gonna+give+you+up' -H 'accept: */*'
+curl -X 'GET' \
+  'http://127.0.0.1:8000/search?term=rick+astley+never+gonna+give+you+up' \
+  -H 'accept: application/json'
 ```
 
-Example response:
+Example JSON response:
 
 ```json
 {
   "title": "Rick Astley - Never Gonna Give You Up (Official Music Video)",
-  "webpage_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-  "thumbnail": "https://i.ytimg.com/vi_webp/dQw4w9WgXcQ/maxresdefault.webp"
+  "link": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+  "thumbnails": [
+    {
+      "url": "https://i.ytimg.com/vi/dQw4w9WgXcQ/hq720.jpg?sqp=-oaymwEcCOgCEMoBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAfut6ib46TKYWnNm5PxBrcX8HLWg",
+      "width": "360",
+      "height": "202"
+    },
+    {
+      "url": "https://i.ytimg.com/vi/dQw4w9WgXcQ/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLDRxusbm2_TGTnDWEIhBTYW2cUQkw",
+      "width": "720",
+      "height": "404"
+    }
+  ]
 }
 ```
 
