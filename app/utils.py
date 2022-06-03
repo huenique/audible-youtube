@@ -27,3 +27,30 @@ async def exec_as_aio(blocking_fn: Callable[..., Any], *args: Any):
 
 async def file_exists(path: str) -> bool:
     return await exec_as_aio(os.path.isfile, path)
+
+
+async def valid_duration(time: str, postion: int, max: int) -> bool:
+    """Check if the duration of the media is less than or equal to the specified
+    maximum value.
+
+    Args:
+        time (str): The given duration.
+        postion (int): Index the duration to check
+            0 - second,
+            1 - minute,
+            2 - hour
+        max (int): The maximum duration.
+
+    Returns:
+        bool: True if the duration is valid, False otherwise.
+    """
+    hms = time.split(":")
+    hms.reverse()
+
+    if len(hms) > 2:
+        return False
+
+    if int(hms[postion]) > max:
+        return False
+    else:
+        return True

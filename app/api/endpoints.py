@@ -6,7 +6,6 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import FileResponse
 from starlette.background import BackgroundTasks
 from starlette.requests import Request
-from starlette.responses import JSONResponse
 from starlette.status import (
     HTTP_404_NOT_FOUND,
     HTTP_409_CONFLICT,
@@ -18,7 +17,7 @@ from app.api.dependencies import get_redis_connection
 from app.models import common
 from app.services import redis as _redis
 from app.services import youtube
-from app.utils import exec_as_aio, file_exists, generate_ticket
+from app.utils import file_exists, generate_ticket, valid_duration
 
 MAX_VIDEO_DURATION = 900
 
@@ -27,7 +26,7 @@ router = APIRouter()
 
 @router.get("/download", name="Download")
 async def download(video: str, _: Request, bg_tasks: BackgroundTasks) -> FileResponse:
-    media = youtube.YoutubeDownloadP()
+    media = youtube.YoutubeDownloadPlus()
     await media.download_video(video)
     bg_tasks.add_task(os.unlink, media.path)  # type: ignore
 
@@ -51,7 +50,7 @@ async def save(
     if all(value is None for value in file):
         raise HTTPException(
             status_code=HTTP_409_CONFLICT,
-            detail=f"{ticket} is not ready; resubmit request",
+            detail=f"{ticket} is not ready. Please wait and resubmit your request",
         )
 
     file = [value.decode("utf-8") for value in file]
@@ -60,7 +59,7 @@ async def save(
     if not await file_exists(path):
         raise HTTPException(
             status_code=HTTP_404_NOT_FOUND,
-            detail=f"{ticket}'s file is missing or removed from filesystem",
+            detail=f"{ticket}'s file is missing or has been removed from filesystem",
         )
 
     bg_tasks.add_task(os.unlink, path)  # type: ignore
@@ -73,16 +72,18 @@ async def save(
     )
 
 
-@router.get("/convert", name="Convert")
+@router.get("/convert", response_model=common.Ticket, name="Convert")
 async def convert(
     video: str, _: Request, redis: Redis = Depends(get_redis_connection)
-) -> JSONResponse:
+) -> common.Ticket:
     try:
         ticket = await generate_ticket()
-        result = await exec_as_aio(youtube.YoutubeDownload.search_video, video)
+        result = await youtube.YoutubeDownloadPlus.search_video(video)
+        result = result["result"][0]
         title = result["title"]
+        duration = result["duration"]
 
-        if (duration := result["duration"]) > MAX_VIDEO_DURATION:
+        if not await valid_duration(duration, 1, MAX_VIDEO_DURATION):
             raise HTTPException(
                 status_code=HTTP_507_INSUFFICIENT_STORAGE,
                 detail=f"video exceeds {MAX_VIDEO_DURATION} seconds: {duration}, {title}",
@@ -92,14 +93,11 @@ async def convert(
             youtube.YoutubeDownload().convert_video(video, redis, ticket)
         )
 
-        return JSONResponse(
-            {
-                "ticket": ticket,
-                "title": title,
-                "webpage_url": result["webpage_url"],
-                "thumbnail": result["thumbnail"],
-            },
-            media_type="application/json",
+        return common.Ticket(
+            ticket=ticket,
+            title=title,
+            link=result["link"],
+            thumbnails=result["thumbnails"],
         )
     except (KeyError, AttributeError) as key_err:
         raise HTTPException(status_code=HTTP_500_INTERNAL_SERVER_ERROR) from key_err
@@ -107,13 +105,14 @@ async def convert(
 
 @router.get("/search", response_model=common.TargetMedia, name="Search")
 async def search(term: str, _: Request) -> common.TargetMedia:
-    result = await exec_as_aio(youtube.YoutubeDownload().search_video, term)
+    result = await youtube.YoutubeDownloadPlus.search_video(term)
+    result = result["result"][0]
 
     try:
         return common.TargetMedia(
             title=result["title"],
-            webpage_url=result["webpage_url"],
-            thumbnail=result["thumbnail"],
+            link=result["link"],
+            thumbnails=result["thumbnails"],
         )
     except KeyError as key_err:
         raise HTTPException(status_code=HTTP_500_INTERNAL_SERVER_ERROR) from key_err

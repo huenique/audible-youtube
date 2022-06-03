@@ -66,9 +66,9 @@ class YoutubeDownload:
 
     def download_progess_hook(self, download: dict[str, Any]) -> None:
         if download["status"] == "finished":
-            self.file_download.name = Path(download["name"]).name
+            self.file_download.name = Path(download["filename"]).name
             self.file_download.size = str(download["_total_bytes_str"])
-            self.file_download.path = download["name"]
+            self.file_download.path = download["filename"]
 
     def set_progress_hook(self) -> None:
         self.file_download.progress_hook["progress_hooks"] = [
@@ -85,7 +85,7 @@ class YoutubeDownload:
         except DownloadError:
             result = self.search_video(url)
             if result is not None:
-                self.download_video(result["webpage_url"])
+                self.download_video(result["result"][0]["link"])
 
     async def convert_video(self, video: str, redis: Redis, ticket: str) -> None:
         loop = asyncio.get_running_loop()
@@ -94,7 +94,7 @@ class YoutubeDownload:
         await self.set_file_expiration()
 
 
-class YoutubeDownloadP(YoutubeDownload):
+class YoutubeDownloadPlus(YoutubeDownload):
     @staticmethod
     async def search_video(search_term: str) -> Any:
         return await AioVideosSearch(search_term, limit=1).next()  # type: ignore
