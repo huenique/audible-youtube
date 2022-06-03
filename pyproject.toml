@@ -1,6 +1,6 @@
 [tool.poetry]
 authors = ["Hju Kneyck Mateo Flores <hjucode@gmail.com>"]
-description = "A youtube video converter, used via REST API endpoints"
+description = "Convert YouTube videos to audio files using REST API endpoints"
 license = "MIT"
 name = "audible-youtube"
 version = "0.1.0"
