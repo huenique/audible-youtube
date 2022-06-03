@@ -2,7 +2,7 @@ from aioredis.client import Redis
 from fastapi import FastAPI
 from loguru import logger
 from redis import Redis as _Redis
-from rq import Queue, pop_connection
+from rq import Queue
 
 from app.settings import REDIS_URL
 
@@ -16,6 +16,5 @@ async def connect_to_redis(app: FastAPI) -> None:
 
 async def close_redis_connection(app: FastAPI) -> None:
     logger.info("Closing connection to Redis server.")
-    app.state.redis.close()
-    pop_connection()
+    await app.state.redis.close()
     logger.info("Closed connection to redis server.")

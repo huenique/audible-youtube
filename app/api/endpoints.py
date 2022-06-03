@@ -1,5 +1,7 @@
 import asyncio
 import os
+import secrets
+from typing import Any, TypeVar
 
 from aioredis.client import Redis
 from fastapi import APIRouter, Depends, HTTPException
@@ -13,13 +15,15 @@ from starlette.status import (
     HTTP_507_INSUFFICIENT_STORAGE,
 )
 
-from app.api.dependencies import get_redis_connection
+from app.api.dependencies import get_redis_connection, get_ytdl_manager
 from app.models import common
-from app.services import redis as _redis
+from app.services import redis as redis_
 from app.services import youtube
-from app.utils import file_exists, generate_ticket, validate_duration
+from app.settings import MAX_VIDEO_DURATION
+from app.utils import validate_duration
 
-MAX_VIDEO_DURATION = 900
+_T = TypeVar("_T", list[dict[str, Any]], list[None])
+
 
 router = APIRouter()
 
@@ -32,22 +36,35 @@ async def _validate_duration(duration: str, title: str) -> None:
         )
 
 
+async def _validate_query_result(result: _T, query: str) -> _T:
+    if not result:
+        raise HTTPException(
+            status_code=HTTP_404_NOT_FOUND,
+            detail=f"no matching result: {query}",
+        )
+    return result
+
+
 @router.get("/download", name="Download")
-async def download(video: str, _: Request, bg_tasks: BackgroundTasks) -> FileResponse:
-    download = youtube.YoutubeDownloadPlus()
-    result = await download.search_video(video)
-    result = result["result"][0]
+async def download(
+    query: str,
+    _: Request,
+    bg_tasks: BackgroundTasks,
+    youtube: youtube.YoutubeDownload = Depends(get_ytdl_manager),
+) -> FileResponse:
+    result = await youtube.search_video_plus(query)
+    result = await _validate_query_result(result["result"], query)
+    result = result[0]
 
     await _validate_duration(result["duration"], result["title"])
-    await download.download_video(video)
-
-    bg_tasks.add_task(os.unlink, download.file_download.path)  # type: ignore
+    await youtube.download_video_plus(query)
+    bg_tasks.add_task(os.unlink, youtube.file_download.path)  # type: ignore
 
     return FileResponse(
-        download.file_download.path,
+        youtube.file_download.path,
         media_type="audio/m4a",
         background=bg_tasks,
-        filename=download.file_download.name,
+        filename=youtube.file_download.name,
     )
 
 
@@ -58,18 +75,18 @@ async def save(
     bg_tasks: BackgroundTasks,
     redis: Redis = Depends(get_redis_connection),
 ) -> FileResponse:
-    file = await _redis.get_dict(redis, ticket, ("path", "name"))
+    print("here")
+    file = await redis_.get_dict(redis, ticket, ("path", "name"))
 
-    if all(value is None for value in file):
+    if all(value == b"" for value in file):
         raise HTTPException(
             status_code=HTTP_409_CONFLICT,
             detail=f"{ticket} is not ready. Please wait and resubmit your request",
         )
 
-    file = [value.decode("utf-8") for value in file]
-    path, name = file[0], file[1]
+    path = file[0] or ""
 
-    if not await file_exists(path):
+    if not os.path.isfile(path):
         raise HTTPException(
             status_code=HTTP_404_NOT_FOUND,
             detail=f"{ticket}'s file is missing or has been removed from filesystem",
@@ -81,25 +98,27 @@ async def save(
         path,
         media_type="audio/m4a",
         background=bg_tasks,
-        filename=name,
+        filename=file[1].decode("utf-8"),
     )
 
 
 @router.get("/convert", response_model=common.Ticket, name="Convert")
 async def convert(
-    video: str, _: Request, redis: Redis = Depends(get_redis_connection)
+    query: str,
+    _: Request,
+    redis: Redis = Depends(get_redis_connection),
+    youtube: youtube.YoutubeDownload = Depends(get_ytdl_manager),
 ) -> common.Ticket:
     try:
-        ticket = await generate_ticket()
-        result = await youtube.YoutubeDownloadPlus.search_video(video)
-        result = result["result"][0]
+        result = await youtube.search_video_plus(query)
+        result = await _validate_query_result(result["result"], query)
+        result = result[0]
         title = result["title"]
+        ticket = secrets.token_hex(16)
 
         await _validate_duration(result["duration"], title)
 
-        asyncio.create_task(
-            youtube.YoutubeDownload().convert_video(video, redis, ticket)
-        )
+        asyncio.create_task(youtube.convert_video(query, redis, ticket))
 
         return common.Ticket(
             ticket=ticket,
@@ -112,9 +131,12 @@ async def convert(
 
 
 @router.get("/search", response_model=common.TargetMedia, name="Search")
-async def search(term: str, _: Request) -> common.TargetMedia:
-    result = await youtube.YoutubeDownloadPlus.search_video(term)
-    result = result["result"][0]
+async def search(
+    query: str, _: Request, youtube: youtube.YoutubeDownload = Depends(get_ytdl_manager)
+) -> common.TargetMedia:
+    result = await youtube.search_video_plus(query)
+    result = await _validate_query_result(result["result"], query)
+    result = result[0]
 
     try:
         return common.TargetMedia(

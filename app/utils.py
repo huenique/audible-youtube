@@ -1,6 +1,5 @@
 import asyncio
 import os
-import secrets
 from typing import Any, Callable
 
 from loguru import logger
@@ -15,18 +14,9 @@ async def start_download_expiration(path: str, seconds: int) -> None:
         logger.info(f"Already removed: {path}")
 
 
-async def generate_ticket() -> str:
-    loop = asyncio.get_running_loop()
-    return await loop.run_in_executor(None, secrets.token_hex, 16)
-
-
 async def exec_as_aio(blocking_fn: Callable[..., Any], *args: Any):
     loop = asyncio.get_running_loop()
     return await loop.run_in_executor(None, blocking_fn, *args)
-
-
-async def file_exists(path: str) -> bool:
-    return await exec_as_aio(os.path.isfile, path)
 
 
 async def validate_duration(time: str, postion: int, max: int) -> bool:
@@ -35,7 +25,7 @@ async def validate_duration(time: str, postion: int, max: int) -> bool:
 
     Args:
         time (str): The given duration.
-        postion (int): Index the duration to check
+        postion (int): Index of the unit of time to check
             0 - second,
             1 - minute,
             2 - hour

@@ -44,4 +44,9 @@ ACCESS_TOKEN_EXPIRE_MINUTES = config(
 
 BASE_DIR = Path(__file__).resolve().parent
 
+# Download manager settings
 MEDIA_ROOT = "media"
+
+FILE_EXPIRE_SECONDS = 120
+
+MAX_VIDEO_DURATION = 900
