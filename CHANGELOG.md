@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 1.1.0-alpha.1 (2022-06-03)
+
+
+### Bug Fixes
+
+* resolve err caused by prev changes ([7fdcd56](https://github.com/huenique/audible-youtube/commit/7fdcd565941152e723d83905f3f773e0d895b01a))
+
+
 ## 1.1.0-alpha.0 (2022-06-03)
 
 
