@@ -1,11 +1,18 @@
 # audible-youtube
 
-audible-youtube is a backend service that enables frontend or client applications to convert and download YouTube videos via REST API endpoints.
+audible-youtube is a backend service that enables application softwares to convert and download YouTube videos using REST API endpoints.
+
+The project's goal is to decouple and eliminate the overhead of converting YouTube videos to audio files from other apps or services.
 
 Supported formats:
 
 - M4A (MPEG 4 Audio)
 -
+
+Test it here: https://audible-youtube.herokuapp.com/docs
+
+## Technologies
+> Please check the dependencies listed in [pyproject.toml](pyproject.toml) file
 
 ## Installation
 
@@ -23,18 +30,18 @@ Supported formats:
 
 ### Convert and Download Videos
 
-1. `/convert` (Fast option)
+1. `/download` (**Fast option/Recommended**)
 
    ```sh
    curl -X 'GET' 'http://127.0.0.1:8000/save?video=rick+astley+never+gonna+give+you+up' --output 'audio_file.m4a'
    ```
 
-2. `/save` & `/download` (Slow option)
+2. `/convert` & `/save` (Slow option)
 
    First, make a request to the server to convert the video:
 
    ```sh
-   curl -X 'GET' 'http://127.0.0.1:8000/save?video=rick+astley+never+gonna+give+you+up' -H 'accept: */*'
+   curl -X 'GET' 'http://127.0.0.1:8000/convert?video=rick+astley+never+gonna+give+you+up' -H 'accept: */*'
    ```
 
    Example response:
@@ -51,7 +58,7 @@ Supported formats:
    Then, use the `ticket` value in the response body to download your audio file:
 
    ```sh
-   curl -X 'GET' 'http://127.0.0.1:8000/download?ticket=1a79a4d60de6718e8e5b326e338ae533' -H 'accept: */*' --output 'audio_file.m4a'
+   curl -X 'GET' 'http://127.0.0.1:8000/save?ticket=1a79a4d60de6718e8e5b326e338ae533' -H 'accept: */*' --output 'audio_file.m4a'
    ```
 
 > Check out the [client example](./example/example_client.py).
