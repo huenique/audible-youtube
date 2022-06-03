@@ -52,3 +52,6 @@ format-import: ## sort imports in codebase
 setup-dev: ## setup development environment
 	poetry shell
 	poetry install
+
+kill-app: ## kill the app running on port 8000
+	kill -9 $(sudo lsof -t -i:8000)
