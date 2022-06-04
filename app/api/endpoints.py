@@ -17,6 +17,12 @@ from starlette.status import (
 
 from app.api.dependencies import get_redis_connection, get_ytdl_manager
 from app.models import common
+from app.resources.details import (
+    SEARCH_QUERY_HAS_NO_MATCH,
+    TICKET_FILE_IS_MISSING,
+    TICKET_IS_NOT_READY,
+    VIDEO_IS_TOO_LONG,
+)
 from app.services import redis as redis_
 from app.services import youtube
 from app.settings import MAX_VIDEO_DURATION
@@ -28,19 +34,19 @@ _T = TypeVar("_T", list[dict[str, Any]], list[None])
 router = APIRouter()
 
 
-async def _validate_duration(duration: str, title: str) -> None:
+async def _validate_duration(duration: str) -> None:
     if not await validate_duration(duration, 1, MAX_VIDEO_DURATION):
         raise HTTPException(
             status_code=HTTP_507_INSUFFICIENT_STORAGE,
-            detail=f"video exceeds {MAX_VIDEO_DURATION} seconds: {duration}, {title}",
+            detail=VIDEO_IS_TOO_LONG,
         )
 
 
-async def _validate_query_result(result: _T, query: str) -> _T:
+async def _validate_query_result(result: _T) -> _T:
     if not result:
         raise HTTPException(
             status_code=HTTP_404_NOT_FOUND,
-            detail=f"no matching result: {query}",
+            detail=SEARCH_QUERY_HAS_NO_MATCH,
         )
     return result
 
@@ -53,10 +59,10 @@ async def download(
     youtube: youtube.YoutubeDownload = Depends(get_ytdl_manager),
 ) -> FileResponse:
     result = await youtube.search_video_plus(query)
-    result = await _validate_query_result(result["result"], query)
+    result = await _validate_query_result(result["result"])
     result = result[0]
 
-    await _validate_duration(result["duration"], result["title"])
+    await _validate_duration(result["duration"])
     await youtube.download_video_plus(query)
     bg_tasks.add_task(os.unlink, youtube.file_download.path)  # type: ignore
 
@@ -80,7 +86,7 @@ async def save(
     if all(value == b"" for value in file):
         raise HTTPException(
             status_code=HTTP_409_CONFLICT,
-            detail=f"{ticket} is not ready. Please wait and resubmit your request",
+            detail=TICKET_IS_NOT_READY,
         )
 
     path = file[0] or ""
@@ -88,7 +94,7 @@ async def save(
     if not os.path.isfile(path):
         raise HTTPException(
             status_code=HTTP_404_NOT_FOUND,
-            detail=f"{ticket}'s file is missing or has been removed from filesystem",
+            detail=TICKET_FILE_IS_MISSING,
         )
 
     bg_tasks.add_task(os.unlink, path)  # type: ignore
@@ -110,12 +116,12 @@ async def convert(
 ) -> common.Ticket:
     try:
         result = await youtube.search_video_plus(query)
-        result = await _validate_query_result(result["result"], query)
+        result = await _validate_query_result(result["result"])
         result = result[0]
         title = result["title"]
         ticket = secrets.token_hex(16)
 
-        await _validate_duration(result["duration"], title)
+        await _validate_duration(result["duration"])
 
         asyncio.create_task(youtube.convert_video(query, redis, ticket))
 
@@ -134,63 +140,8 @@ async def search(
     query: str, _: Request, youtube: youtube.YoutubeDownload = Depends(get_ytdl_manager)
 ) -> common.TargetMedia:
     result = await youtube.search_video_plus(query)
-    result = await _validate_query_result(result["result"], query)
+    result = await _validate_query_result(result["result"])
     result = result[0]
-
-    print(result)
-
-    {
-        "type": "video",
-        "id": "AGCL3icu9dk",
-        "title": "Mitski - Me and My Husband (Lyric Video)",
-        "publishedTime": "1 year ago",
-        "duration": "2:18",
-        "viewCount": {"text": "7,104,191 views", "short": "7.1M views"},
-        "thumbnails": [
-            {
-                "url": "https://i.ytimg.com/vi/AGCL3icu9dk/hq720.jpg?sqp=-oaymwEcCOgCEMoBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLC2SI860nxP56NUy2svpFdgO3jCjg",
-                "width": 360,
-                "height": 202,
-            },
-            {
-                "url": "https://i.ytimg.com/vi/AGCL3icu9dk/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLC4diDjerHdNfVQq9yHC4NsNLdxtQ",
-                "width": 720,
-                "height": 404,
-            },
-        ],
-        "richThumbnail": {
-            "url": "https://i.ytimg.com/an_webp/AGCL3icu9dk/mqdefault_6s.webp?du=3000&sqp=CM7m6JQG&rs=AOn4CLCDLP6AFDNqVJ-noA8Pu9BfcKJctQ",
-            "width": 320,
-            "height": 180,
-        },
-        "descriptionSnippet": [
-            {"text": "Lyrics: "},
-            {"text": "I", "bold": True},
-            {"text": " steal a few breaths from the world for a minute And then "},
-            {"text": "I", "bold": True},
-            {"text": "'ll be nothing forever And all of "},
-            {"text": "my", "bold": True},
-            {"text": " memories And all of the things\xa0..."},
-        ],
-        "channel": {
-            "name": "Dead Oceans",
-            "id": "UCNa3uC5LqiRHOnv5b4MZ36g",
-            "thumbnails": [
-                {
-                    "url": "https://yt3.ggpht.com/ytc/AKedOLSVCLGIQfwXe312OqW2KDifLk3ibb4l16pJpQrU=s68-c-k-c0x00ffffff-no-rj",
-                    "width": 68,
-                    "height": 68,
-                }
-            ],
-            "link": "https://www.youtube.com/channel/UCNa3uC5LqiRHOnv5b4MZ36g",
-        },
-        "accessibility": {
-            "title": "Mitski - Me and My Husband (Lyric Video) by Dead Oceans 1 year ago 2 minutes, 18 seconds 7,104,191 views",
-            "duration": "2 minutes, 18 seconds",
-        },
-        "link": "https://www.youtube.com/watch?v=AGCL3icu9dk",
-        "shelfTitle": None,
-    }
 
     try:
         return common.TargetMedia(
