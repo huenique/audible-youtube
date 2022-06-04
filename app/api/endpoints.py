@@ -98,6 +98,7 @@ async def save(
         )
 
     bg_tasks.add_task(os.unlink, path)  # type: ignore
+    await redis.delete(ticket)  # type: ignore
 
     return FileResponse(
         path,
