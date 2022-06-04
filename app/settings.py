@@ -48,6 +48,6 @@ BASE_DIR = Path(__file__).resolve().parent
 # Download manager settings
 MEDIA_ROOT = "media"
 
-FILE_EXPIRE_SECONDS = 120
+FILE_EXPIRE_SECONDS = 60
 
 MAX_VIDEO_DURATION = 900
