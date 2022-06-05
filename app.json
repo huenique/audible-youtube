@@ -12,19 +12,11 @@
     },
     "APP_VERSION": {
       "description": "Latest app version (used by OpenAPI)",
-      "value": "0.1.0"
+      "value": "1.1.0-alpha.3"
     },
     "ALLOWED_ORIGINS": {
       "description": "Origins (domain, scheme, or port) allowed to use the app as a backend. Allow all as default",
       "required": false
-    },
-    "MIN_CONNECTIONS_COUNT": {
-      "description": "Minimum number of connections in a database connection pool",
-      "value": "10"
-    },
-    "MAX_CONNECTIONS_COUNT": {
-      "description": "Maximum number of connections in a database connection pool",
-      "value": "10"
     }
   },
   "formation": {
