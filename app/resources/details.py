@@ -2,8 +2,12 @@
 app.resources.details
 ~~~~~~~~~~~~~~~~~~~~~
 
-This module contains detailed messages for HTTP responses and documention.
+This module contains messages and formatting for HTTP responses and documention.
 """
+import json
+import typing
+
+from starlette.responses import Response
 
 # http error messages
 TICKET_IS_NOT_READY = "please wait and resubmit your request"
@@ -106,3 +110,16 @@ class AudibleYtContent:
     @property
     def conversion_notice(self):
         return CONVERSION_NOTICE
+
+
+class PrettyJSONResponse(Response):
+    media_type = "application/json"
+
+    def render(self, content: typing.Any) -> bytes:
+        return json.dumps(
+            content,
+            ensure_ascii=False,
+            allow_nan=False,
+            indent=4,
+            separators=(", ", ": "),
+        ).encode("utf-8")

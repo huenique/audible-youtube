@@ -18,7 +18,7 @@ from starlette.status import (
 
 from app.api.dependencies import get_redis_connection, get_ytdl_manager
 from app.models.domain.video import TargetMedia, Ticket
-from app.resources.details import AudibleYtContent
+from app.resources.details import AudibleYtContent, PrettyJSONResponse
 from app.services import youtube
 from app.utils import validate_duration
 
@@ -187,6 +187,7 @@ async def convert(
 @router.get(
     "/search",
     name="Search",
+    response_class=PrettyJSONResponse,
     response_model=TargetMedia,
     responses={
         HTTP_200_OK: {
@@ -228,6 +229,6 @@ async def search(
         )
 
 
-@router.get("/")
+@router.get("/", include_in_schema=False)
 async def read_index():
     return RedirectResponse(url="/public/index.html")
