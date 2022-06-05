@@ -1,6 +1,5 @@
 from pathlib import Path
 
-import databases
 from starlette.config import Config
 from starlette.datastructures import CommaSeparatedStrings
 
@@ -21,8 +20,6 @@ ALLOWED_ORIGINS: list[str] = config(
     cast=CommaSeparatedStrings,
     default=["*"],
 )
-
-DATABASE_URL = config("DATABASE_URL", cast=databases.DatabaseURL)
 
 MAX_CONNECTIONS_COUNT = config("MAX_CONNECTIONS_COUNT", cast=int, default=10)
 
