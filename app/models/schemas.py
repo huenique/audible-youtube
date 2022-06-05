@@ -1,12 +1,12 @@
-from typing import Optional
+import typing
 
-from pydantic import BaseModel
+import pydantic
 
 
-class User(BaseModel):
+class User(pydantic.BaseModel):
     username: str
-    email: Optional[str] = None
-    disabled: Optional[bool] = None
+    email: typing.Optional[str] = None
+    disabled: typing.Optional[bool] = None
 
 
 class UserInDB(User):

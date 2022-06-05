@@ -1,18 +1,14 @@
 import asyncio
 import os
-from pathlib import Path
-from typing import Any, Optional, Union
+import pathlib
+import typing
 
-from aioredis.client import Redis
-from youtube_dl import YoutubeDL
-from youtube_dl.utils import DownloadError
-from youtubesearchpython import VideosSearch
-from youtubesearchpython.__future__ import VideosSearch as AioVideosSearch
-from yt_dlp import YoutubeDL as YoutubeDLP
-from yt_dlp.utils import DownloadError as DownloadErrorP
+import youtube_dl
+import yt_dlp
+from aioredis import client
+from youtubesearchpython import __future__ as ytsearch
 
-from app.settings import BASE_DIR, FILE_EXPIRE_SECONDS, MEDIA_ROOT
-from app.utils import exec_as_aio, start_download_expiration
+from app import settings, utils
 
 
 class FileDownload:
@@ -20,12 +16,14 @@ class FileDownload:
     size: str = ""
     path: str = ""
 
-    progress_hook: dict[str, Any] = {
+    progress_hook: dict[str, typing.Any] = {
         "noplaylist": True,
         "quiet": True,
         "no_warnings": True,
         "outtmpl": os.path.join(
-            *f"{BASE_DIR},{MEDIA_ROOT},%(title)s.%(epoch)s.%(ext)s".split(",")
+            *f"{settings.BASE_DIR},{settings.MEDIA_ROOT},%(title)s.%(epoch)s.%(ext)s".split(
+                ","
+            )
         ),
         "format": "bestaudio[ext=m4a]",
         "progress_hooks": [],
@@ -35,9 +33,9 @@ class FileDownload:
 class YtDownloadManager:
     def __init__(self) -> None:
         self.file_download = FileDownload()
-        self.event_loop: Optional[asyncio.AbstractEventLoop] = None
-        self.redis: Optional[Redis] = None
-        self.ticket: Optional[str] = None
+        self.event_loop: typing.Optional[asyncio.AbstractEventLoop] = None
+        self.client: typing.Optional[client.Redis] = None
+        self.ticket: typing.Optional[str] = None
         self.using_yt_dlp = False
 
     @staticmethod
@@ -48,34 +46,32 @@ class YtDownloadManager:
         return url
 
     @staticmethod
-    def search_video(search_term: str) -> Any:
-        return VideosSearch(search_term, limit=1).result()  # type: ignore
+    async def search_video_plus(search_term: str) -> typing.Any:
+        return await ytsearch.VideosSearch(search_term, limit=1).next()  # type: ignore
 
-    @staticmethod
-    async def search_video_plus(search_term: str) -> Any:
-        return await AioVideosSearch(search_term, limit=1).next()  # type: ignore
-
-    def download_progess_hook(self, download: dict[str, Any]) -> None:
+    def download_progess_hook(self, download: dict[str, typing.Any]) -> None:
         if download["status"] == "finished":
-            self.file_download.name = Path(download["filename"]).name
+            self.file_download.name = pathlib.Path(download["filename"]).name
             self.file_download.size = str(download["_total_bytes_str"])
             self.file_download.path = download["filename"]
 
             if not self.using_yt_dlp and isinstance(
                 self.event_loop, asyncio.AbstractEventLoop
             ):
-                if isinstance(self.redis, Redis) and isinstance(self.ticket, str):
+                if isinstance(self.client, client.Redis) and isinstance(
+                    self.ticket, str
+                ):
                     self.event_loop.create_task(
-                        start_download_expiration(
-                            self.redis,
+                        utils.start_download_expiration(
+                            self.client,
                             self.ticket,
                             self.file_download.path,
-                            FILE_EXPIRE_SECONDS,
+                            settings.FILE_EXPIRE_SECONDS,
                         )
                     )
                 else:
                     raise TypeError(
-                        f"{self.using_yt_dlp=}, {self.redis=}, {self.ticket=}"
+                        f"{self.using_yt_dlp=}, {self.client=}, {self.ticket=}"
                     )
 
     async def set_progress_hook(self) -> None:
@@ -89,34 +85,40 @@ class YtDownloadManager:
     async def download_vid(
         self,
         query: str,
-        dl_manager: type[Union[YoutubeDL, YoutubeDLP]],
-        err: type[Union[DownloadError, DownloadErrorP]],
+        dl_manager: type[typing.Union[youtube_dl.YoutubeDL, yt_dlp.YoutubeDL]],
+        err: type[
+            typing.Union[youtube_dl.utils.DownloadError, yt_dlp.utils.DownloadError]
+        ],
     ):
         query = self.parse_url_str(query)
         await self.set_progress_hook()
 
         try:
             with dl_manager(self.file_download.progress_hook) as ydl:
-                _ = await exec_as_aio(ydl.extract_info, query)  # type: ignore
+                _ = await utils.exec_as_aio(ydl.extract_info, query)  # type: ignore
         except err:
             result = await self.search_video_plus(query)
 
             if result is not None:
                 await self.download_vid(result["result"][0]["link"], dl_manager, err)
 
-    async def download_video(self, query: str) -> Any:
-        await self.download_vid(query, YoutubeDL, DownloadError)
+    async def download_video(self, query: str) -> typing.Any:
+        await self.download_vid(
+            query, youtube_dl.YoutubeDL, youtube_dl.utils.DownloadError
+        )
 
-    async def download_video_plus(self, query: str) -> Any:
+    async def download_video_plus(self, query: str) -> typing.Any:
         self.using_yt_dlp = True
 
-        await self.download_vid(query, YoutubeDLP, DownloadErrorP)
+        await self.download_vid(query, yt_dlp.YoutubeDL, yt_dlp.utils.DownloadError)
 
-    async def convert_video(self, query: str, redis: Redis, ticket: str) -> None:
-        self.redis = redis
+    async def convert_video(
+        self, query: str, client: client.Redis, ticket: str
+    ) -> None:
+        self.client = client
         self.ticket = ticket
 
-        await redis.hmset(  # type: ignore
+        await client.Redis.hmset(  # type: ignore
             self.ticket,
             {"path": self.file_download.path, "name": self.file_download.name},
         )
@@ -124,7 +126,7 @@ class YtDownloadManager:
 
         # The file related attribs will be updated once youtube-dl or yt-dlp finishes,
         # so we call hmset() again.
-        await redis.hmset(  # type: ignore
+        await client.Redis.hmset(  # type: ignore
             self.ticket,
             {"path": self.file_download.path, "name": self.file_download.name},
         )

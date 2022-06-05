@@ -1,9 +1,9 @@
-from typing import Union
+import typing
 
-from pydantic import BaseModel
+import pydantic
 
 
-class TargetMedia(BaseModel):
+class TargetMedia(pydantic.BaseModel):
     title: str
     id: str
     publication_time: str
@@ -11,14 +11,14 @@ class TargetMedia(BaseModel):
     duration: str
     viewcount: dict[str, str]
     link: str
-    thumbnails: list[dict[str, Union[str, int]]]
-    description: list[dict[str, Union[str, bool]]]
-    channel: dict[str, Union[str, list[dict[str, Union[str, Union[int, float]]]]]]
+    thumbnails: list[dict[str, typing.Any]]
+    description: dict[str, typing.Any]
+    channel: dict[str, typing.Any]
     accessibility: dict[str, str]
 
 
-class Ticket(BaseModel):
+class Ticket(pydantic.BaseModel):
     ticket: str
     title: str
     link: str
-    thumbnails: list[dict[str, Union[str, int]]]
+    thumbnails: list[dict[str, typing.Union[str, int]]]

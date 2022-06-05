@@ -1,9 +1,9 @@
-from pathlib import Path
+import pathlib
 
-from starlette.config import Config
-from starlette.datastructures import CommaSeparatedStrings
+from starlette import config as config_
+from starlette import datastructures
 
-config = Config(".env")
+config = config_.Config(".env")
 
 # global vars used by OpenAPI
 APP_NAME = "audible-youtube"
@@ -17,7 +17,7 @@ DEBUG = config("DEBUG", cast=bool, default=False)
 
 ALLOWED_ORIGINS: list[str] = config(
     "ALLOWED_ORIGINS",
-    cast=CommaSeparatedStrings,
+    cast=datastructures.CommaSeparatedStrings,
     default=["*"],
 )
 
@@ -27,7 +27,7 @@ RATE_LIMIT = config(
     "RATE_LIMIT", cast=str, default="5/minute"  # Number of requests per minute
 )
 
-BASE_DIR = Path(__file__).resolve().parent
+BASE_DIR = pathlib.Path(__file__).resolve().parent
 
 # Download manager settings
 MEDIA_ROOT = "media"

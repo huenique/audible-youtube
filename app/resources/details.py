@@ -7,7 +7,7 @@ This module contains messages and formatting for HTTP responses and documention.
 import json
 import typing
 
-from starlette.responses import Response
+from starlette import responses
 
 # http error messages
 TICKET_IS_NOT_READY = "please wait and resubmit your request"
@@ -112,7 +112,7 @@ class AudibleYtContent:
         return CONVERSION_NOTICE
 
 
-class PrettyJSONResponse(Response):
+class PrettyJSONResponse(responses.Response):
     media_type = "application/json"
 
     def render(self, content: typing.Any) -> bytes:

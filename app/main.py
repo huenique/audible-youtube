@@ -1,66 +1,57 @@
-from fastapi import FastAPI
-from fastapi.exceptions import HTTPException, RequestValidationError
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.openapi.utils import get_openapi
-from fastapi.staticfiles import StaticFiles
-from slowapi.errors import RateLimitExceeded
-from slowapi.extension import Limiter, _rate_limit_exceeded_handler  # type: ignore
-from slowapi.middleware import SlowAPIMiddleware
-from slowapi.util import get_remote_address
+import fastapi
+from fastapi import exceptions, staticfiles
+from fastapi.middleware import cors
+from fastapi.openapi import utils
+from slowapi import errors, extension, middleware, util
 
-from app.api.errors.http_error import http_error_handler
-from app.api.errors.validation_error import http422_error_handler
+from app import settings
+from app.api.errors import http_error, validation_error
 from app.api.routes import router as api_router
-from app.core.events import create_start_app_handler, create_stop_app_handler
-from app.settings import (
-    ALLOWED_ORIGINS,
-    APP_DESCRIPTION,
-    APP_NAME,
-    APP_VERSION,
-    DEBUG,
-    RATE_LIMIT,
-    REDIS_URL,
-)
+from app.core import events
 
 
 def custom_openapi():
     if app.openapi_schema:
         return app.openapi_schema
-    openapi_schema = get_openapi(
-        title=APP_NAME,
-        version=APP_VERSION,
-        description=APP_DESCRIPTION,
+    openapi_schema = utils.get_openapi(
+        title=settings.APP_NAME,
+        version=settings.APP_VERSION,
+        description=settings.APP_DESCRIPTION,
         routes=app.routes,
     )
     app.openapi_schema = openapi_schema
     return app.openapi_schema
 
 
-def start_application() -> FastAPI:
-    app = FastAPI(title=APP_NAME, debug=DEBUG, version=APP_VERSION)
-
-    app.mount("/public", StaticFiles(directory="public"), name="public")
-    app.openapi = custom_openapi
-    app.state.limiter = Limiter(
-        key_func=get_remote_address, default_limits=[RATE_LIMIT], storage_uri=REDIS_URL
+def start_application() -> fastapi.FastAPI:
+    app = fastapi.FastAPI(
+        title=settings.APP_NAME, debug=settings.DEBUG, version=settings.APP_VERSION
     )
 
-    app.add_middleware(SlowAPIMiddleware)
+    app.mount("/public", staticfiles.StaticFiles(directory="public"), name="public")
+    app.openapi = custom_openapi
+    app.state.limiter = extension.Limiter(
+        key_func=util.get_remote_address,
+        default_limits=[settings.RATE_LIMIT],
+        storage_uri=settings.REDIS_URL,
+    )
+
+    app.add_middleware(middleware.SlowAPIMiddleware)
     app.add_middleware(
-        CORSMiddleware,
-        allow_origins=ALLOWED_ORIGINS,
+        cors.CORSMiddleware,
+        allow_origins=settings.ALLOWED_ORIGINS,
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
     )
 
-    app.add_event_handler("startup", create_start_app_handler(app))  # type: ignore
-    app.add_event_handler("shutdown", create_stop_app_handler(app))  # type: ignore
+    app.add_event_handler("startup", events.create_start_app_handler(app))  # type: ignore
+    app.add_event_handler("shutdown", events.create_stop_app_handler(app))  # type: ignore
 
-    app.add_exception_handler(HTTPException, http_error_handler)  # type: ignore
-    app.add_exception_handler(RequestValidationError, http422_error_handler)  # type: ignore
+    app.add_exception_handler(exceptions.HTTPException, http_error.http_error_handler)  # type: ignore
+    app.add_exception_handler(exceptions.RequestValidationError, validation_error.http422_error_handler)  # type: ignore
     app.add_exception_handler(  # type: ignore
-        RateLimitExceeded, _rate_limit_exceeded_handler
+        errors.RateLimitExceeded, extension._rate_limit_exceeded_handler  # type: ignore
     )
 
     app.include_router(api_router)

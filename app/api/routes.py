@@ -1,6 +1,6 @@
-from fastapi import APIRouter
+import fastapi
 
 from app.api import endpoints
 
-router = APIRouter(tags=["videos"])
+router = fastapi.APIRouter(tags=["videos"])
 router.include_router(endpoints.router)

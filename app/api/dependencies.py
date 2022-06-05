@@ -1,12 +1,12 @@
-from aioredis.client import Redis
-from starlette.requests import Request
+from aioredis import client
+from starlette import requests
 
-from app.services.youtube import YtDownloadManager
+from app.services import youtube
 
 
-def get_redis_connection(request: Request) -> Redis:
+def get_redis_connection(request: requests.Request) -> client.Redis:
     return request.app.state.redis
 
 
-def get_ytdl_manager() -> YtDownloadManager:
-    return YtDownloadManager()
+def get_ytdl_manager() -> youtube.YtDownloadManager:
+    return youtube.YtDownloadManager()

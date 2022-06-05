@@ -1,15 +1,15 @@
 import asyncio
 import os
-from typing import Any, Callable
+import typing
 
-from aioredis.client import Redis
+from aioredis import client
 from loguru import logger
 
-from app.settings import MAX_VIDEO_DURATION
+from app import settings
 
 
 async def start_download_expiration(
-    redis: Redis, ticket: str, fpath: str, seconds: int
+    redis: client.Redis, ticket: str, fpath: str, seconds: int
 ) -> None:
     """Remove the specified file and its corresponding ticket after a specified amount
     of time.
@@ -32,7 +32,9 @@ async def start_download_expiration(
         logger.info(f"Already removed: {fpath}")
 
 
-async def exec_as_aio(blocking_fn: Callable[..., Any], *args: Any) -> Any:
+async def exec_as_aio(
+    blocking_fn: typing.Callable[..., typing.Any], *args: typing.Any
+) -> typing.Any:
     """Asynchronously run blocking functions or methods.
 
     Args:
@@ -46,7 +48,7 @@ async def exec_as_aio(blocking_fn: Callable[..., Any], *args: Any) -> Any:
 
 
 async def validate_duration(
-    time: str, postion: int, max: int = MAX_VIDEO_DURATION
+    time: str, postion: int, max: int = settings.MAX_VIDEO_DURATION
 ) -> bool:
     """Check if the duration of the media is less than or equal to the specified
     maximum value.
