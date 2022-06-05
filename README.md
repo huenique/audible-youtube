@@ -25,10 +25,20 @@ Supported audio formats:
 ## Setup
 
 1. `cd` into the project directory, e.g. audible-youtube.
+
 2. Inside the project's root directory, run `poetry shell`. This will create or start the virtual environment. Make sure [poetry](https://github.com/python-poetry/poetry#installation) is installed.
+
 3. Run `poetry install`. This will install the project and its dependencies.
-4. Run the app: `uvicorn app.main:app`.
-5. Go to `http://127.0.0.1:8000/docs`
+
+4. Create a copy of `.env.example`:
+
+    ```sh
+    cp .env.example .env
+    ```
+
+5. Run the app: `uvicorn app.main:app`.
+
+6. Go to `http://127.0.0.1:8000/docs`
 
 ## Usage
 
