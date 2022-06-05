@@ -1,13 +1,14 @@
 from fastapi import FastAPI
+from fastapi.exceptions import HTTPException, RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
 from slowapi.errors import RateLimitExceeded
 from slowapi.extension import Limiter, _rate_limit_exceeded_handler  # type: ignore
 from slowapi.middleware import SlowAPIMiddleware
 from slowapi.util import get_remote_address
-from starlette.exceptions import HTTPException
 
-from app.api.errors import http_error_handler
+from app.api.errors.http_error import http_error_handler
+from app.api.errors.validation_error import http422_error_handler
 from app.api.routes import router as api_router
 from app.core.events import create_start_app_handler, create_stop_app_handler
 from app.settings import (
@@ -55,6 +56,7 @@ def start_application() -> FastAPI:
     app.add_event_handler("shutdown", create_stop_app_handler(app))  # type: ignore
 
     app.add_exception_handler(HTTPException, http_error_handler)  # type: ignore
+    app.add_exception_handler(RequestValidationError, http422_error_handler)  # type: ignore
     app.add_exception_handler(  # type: ignore
         RateLimitExceeded, _rate_limit_exceeded_handler
     )

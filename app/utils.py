@@ -5,6 +5,8 @@ from typing import Any, Callable
 from aioredis.client import Redis
 from loguru import logger
 
+from app.settings import MAX_VIDEO_DURATION
+
 
 async def start_download_expiration(
     redis: Redis, ticket: str, fpath: str, seconds: int
@@ -19,7 +21,9 @@ async def start_download_expiration(
         seconds (int): Time to wait before removing the file and the ticket.
     """
     await asyncio.sleep(seconds)
-    await redis.delete(ticket)  # type: ignore
+
+    if ticket is not None:
+        await redis.delete(ticket)  # type: ignore
 
     try:
         os.unlink(fpath)
@@ -41,7 +45,9 @@ async def exec_as_aio(blocking_fn: Callable[..., Any], *args: Any) -> Any:
     return await loop.run_in_executor(None, blocking_fn, *args)
 
 
-async def validate_duration(time: str, postion: int, max: int) -> bool:
+async def validate_duration(
+    time: str, postion: int, max: int = MAX_VIDEO_DURATION
+) -> bool:
     """Check if the duration of the media is less than or equal to the specified
     maximum value.
 
@@ -62,7 +68,12 @@ async def validate_duration(time: str, postion: int, max: int) -> bool:
     if len(hms) > 2:
         return False
 
-    if int(hms[postion]) > max:
+    if postion > 0:
+        unit_multiplier = 60
+    else:
+        unit_multiplier = 1
+
+    if int(hms[postion]) * unit_multiplier >= max:
         return False
     else:
         return True
