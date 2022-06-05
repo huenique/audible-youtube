@@ -2,14 +2,18 @@
 
 audible-youtube is a backend service that enables application softwares to convert and download YouTube videos using REST API endpoints.
 
-The project's aims to decouple and eliminate the overhead of converting YouTube videos to audio files from other apps or services.
+The project aims to decouple and eliminate the overhead of converting YouTube videos to audio files from other apps or services.
 
 Supported audio formats:
 
 - M4A (MPEG 4 Audio)
 -
 
-> Test it here: https://audible-youtube.herokuapp.com/docs
+> Try it here: https://audible-youtube.herokuapp.com/docs
+
+> *TODO:*
+> - [ ] Support MP3 format
+> - [ ] Implement webhook for slow option
 
 ## Technologies
 > Please refer to the dependencies section in the [pyproject.toml](pyproject.toml) file.
@@ -217,7 +221,7 @@ If you're using a frontend app, remember to fill the `ALLOWED_ORIGINS` field wit
 Check the [contributing guide](./.github/CONTRIBUTING.md) to learn more about the development process and how you can test your changes.
 
 Have a question?\
-Discord: [cnif.coffee#5404]()\
+Discord: [cnif.coffee#5404](https://discordapp.com/users/319861160239431682)\
 E-mail: hjucode@gmail.com
 
 ## License
