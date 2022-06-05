@@ -5,7 +5,7 @@ from typing import Any, TypeVar
 
 from aioredis.client import Redis
 from fastapi import APIRouter, Depends, HTTPException
-from fastapi.responses import FileResponse, Response
+from fastapi.responses import FileResponse, RedirectResponse, Response
 from starlette.background import BackgroundTasks
 from starlette.requests import Request
 from starlette.status import (
@@ -226,3 +226,8 @@ async def search(
         raise HTTPException(
             status_code=HTTP_500_INTERNAL_SERVER_ERROR, detail={"msg": key_err}
         )
+
+
+@router.get("/")
+async def read_index():
+    return RedirectResponse(url="/public/index.html")

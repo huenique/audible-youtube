@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.exceptions import HTTPException, RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
+from fastapi.staticfiles import StaticFiles
 from slowapi.errors import RateLimitExceeded
 from slowapi.extension import Limiter, _rate_limit_exceeded_handler  # type: ignore
 from slowapi.middleware import SlowAPIMiddleware
@@ -38,6 +39,7 @@ def custom_openapi():
 def start_application() -> FastAPI:
     app = FastAPI(title=APP_NAME, debug=DEBUG, version=APP_VERSION)
 
+    app.mount("/public", StaticFiles(directory="public"), name="public")
     app.openapi = custom_openapi
     app.state.limiter = Limiter(
         key_func=get_remote_address, default_limits=[RATE_LIMIT], storage_uri=REDIS_URL
