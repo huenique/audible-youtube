@@ -1,16 +1,16 @@
 import typing
 
 import pydantic
-from fastapi import exceptions
+from fastapi import exceptions, responses
 from fastapi.openapi import constants, utils
-from starlette import requests, responses, status
+from starlette import requests, status
 
 
 async def http422_error_handler(
     _: requests.Request,
     exc: typing.Union[exceptions.RequestValidationError, pydantic.ValidationError],
-) -> responses.JSONResponse:
-    return responses.JSONResponse(
+) -> responses.ORJSONResponse:
+    return responses.ORJSONResponse(
         {"errors": exc.errors()},
         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
     )

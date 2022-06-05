@@ -179,7 +179,6 @@ async def convert(
 @router.get(
     "/search",
     name="Search",
-    response_class=details.PrettyJSONResponse,
     response_model=video.TargetMedia,
     responses={
         status.HTTP_200_OK: {
@@ -196,25 +195,12 @@ async def search(
     query: str,
     _: requests.Request,
     youtube: youtube.YtDownloadManager = fastapi.Depends(dependencies.get_ytdl_manager),
-) -> video.TargetMedia:
+):
     result = await youtube.search_video_plus(query)
     result = await _validate_search_result(result["result"])
-    result = result[0]
 
     try:
-        return video.TargetMedia(
-            title=result["title"],
-            id=result["title"],
-            type=result["type"],
-            publication_time=result["title"],
-            duration=result["duration"],
-            viewcount=result["viewCount"],
-            link=result["link"],
-            thumbnails=result["thumbnails"],
-            description=result["descriptionSnippet"],
-            channel=result["channel"],
-            accessibility=result["accessibility"],
-        )
+        return responses.ORJSONResponse(content=result[0])
     except KeyError as key_err:
         raise fastapi.HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail={"msg": key_err}
