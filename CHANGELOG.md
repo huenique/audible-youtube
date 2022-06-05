@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 1.1.0-alpha.3 (2022-06-05)
+
+
+### ⚠ BREAKING CHANGES
+
+* halve file expiration time
+
+### Bug Fixes
+
+* halve file expiration time ([0d38d81](https://github.com/huenique/audible-youtube/commit/0d38d81b4ac31019a855c45423e4c1094111fbd8))
+
 ## 1.1.0-alpha.2 (2022-06-03)
 
 

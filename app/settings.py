@@ -11,7 +11,7 @@ APP_NAME = "audible-youtube"
 
 APP_DESCRIPTION = "Convert YouTube videos to audio files using REST API endpoints"
 
-APP_VERSION = "1.1.0-alpha.2"
+APP_VERSION = "1.1.0-alpha.3"
 
 # Secrets or env settings
 DEBUG = config("DEBUG", cast=bool, default=False)
