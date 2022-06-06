@@ -2,12 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 1.1.0-alpha.5 (2022-06-06)
+
+
+### Features
+
+* extend result of search endpoint ([eec6714](https://github.com/huenique/audible-youtube/commit/eec6714abcc6d09c1d1d8ae6f60f8cc8e5de43ed))
+
 ## 1.1.0-alpha.4 (2022-06-05)
 
 
 ### Features
 
-* add static home page ([5d0cd7f](https://github.com/huenique/audible-youtube/commit/
+* add static home page ([5d0cd7f](https://github.com/huenique/audible-youtube/commit/))
 
 ## 1.1.0-alpha.3 (2022-06-05)
 
