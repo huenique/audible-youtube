@@ -22,30 +22,54 @@ QUERY_HAS_NO_MATCH = "search query did not return a matching result"
 SEARCH_RESULT_CONTENT = {
     "application/json": {
         "example": {
-            "title": "string",
-            "id": "string",
-            "publication_time": "string",
-            "type": "string",
-            "duration": "string",
-            "viewcount": {"text": "string", "short": "string"},
-            "link": "string",
-            "thumbnails": [{"url": "string", "width": "string", "height": "string"}],
-            "description": [
-                {"text": "string"},
-                {"text": "string", "bold": "string"},
-                {"text": "string"},
-                {"text": "string", "bold": "string"},
-                {"text": "string"},
+            "type": "video",
+            "id": "dQw4w9WgXcQ",
+            "title": "Rick Astley - Never Gonna Give You Up (Official Music Video)",
+            "publishedTime": "12 years ago",
+            "duration": "3:33",
+            "viewCount": {"text": "1,226,115,753 views", "short": "1.2B views"},
+            "thumbnails": [
+                {
+                    "url": "https://i.ytimg.com/vi/dQw4w9WgXcQ/hq720.jpg?sqp=-oaymwEcCOgCEMoBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAfut6ib46TKYWnNm5PxBrcX8HLWg",
+                    "width": 360,
+                    "height": 202,
+                },
+                {
+                    "url": "https://i.ytimg.com/vi/dQw4w9WgXcQ/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLDRxusbm2_TGTnDWEIhBTYW2cUQkw",
+                    "width": 720,
+                    "height": 404,
+                },
+            ],
+            "richThumbnail": {
+                "url": "https://i.ytimg.com/an_webp/dQw4w9WgXcQ/mqdefault_6s.webp?du=3000&sqp=CPye9pQG&rs=AOn4CLDYr_LyEDlnnOvNJBPXL8lI2JF7jA",
+                "width": 320,
+                "height": 180,
+            },
+            "descriptionSnippet": [
+                {"text": "“"},
+                {"text": "Never Gonna Give You Up", "bold": True},
+                {
+                    "text": "” was a global smash on its release in July 1987, topping the charts in 25 countries including Rick's ..."
+                },
             ],
             "channel": {
-                "name": "string",
-                "id": "string",
+                "name": "Rick Astley",
+                "id": "UCuAXFkgsw1L7xaCfnd5JJOw",
                 "thumbnails": [
-                    {"url": "string", "width": "string", "height": "string"}
+                    {
+                        "url": "https://yt3.ggpht.com/BbWaWU-qyR5nfxxXclxsI8zepppYL5x1agIPGfRdXFm5fPEewDsRRWg4x6P6fdKNhj84GoUpUI4=s88-c-k-c0x00ffffff-no-rj",
+                        "width": 68,
+                        "height": 68,
+                    }
                 ],
-                "link": "string",
+                "link": "https://www.youtube.com/channel/UCuAXFkgsw1L7xaCfnd5JJOw",
             },
-            "accessibility": {"title": "string", "duration": "string"},
+            "accessibility": {
+                "title": "Rick Astley - Never Gonna Give You Up (Official Music Video) by Rick Astley 12 years ago 3 minutes, 33 seconds 1,226,115,753 views",
+                "duration": "3 minutes, 33 seconds",
+            },
+            "link": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+            "shelfTitle": "",
         }
     }
 }
@@ -53,19 +77,19 @@ SEARCH_RESULT_CONTENT = {
 CONVERSION_NOTICE = {
     "application/json": {
         "example": {
-            "ticket": "string",
-            "title": "string",
-            "link": "string",
+            "ticket": "9afa41d24fd92c535bc05132344adde6",
+            "title": "Rick Astley - Never Gonna Give You Up (Official Music Video)",
+            "link": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
             "thumbnails": [
                 {
-                    "url": "string",
-                    "width": "string",
-                    "height": "string",
+                    "url": "https://i.ytimg.com/vi/dQw4w9WgXcQ/hq720.jpg?sqp=-oaymwEcCOgCEMoBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAfut6ib46TKYWnNm5PxBrcX8HLWg",
+                    "width": "360",
+                    "height": "202",
                 },
                 {
-                    "url": "string",
-                    "width": "string",
-                    "height": "string",
+                    "url": "https://i.ytimg.com/vi/dQw4w9WgXcQ/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLDRxusbm2_TGTnDWEIhBTYW2cUQkw",
+                    "width": "720",
+                    "height": "404",
                 },
             ],
         }

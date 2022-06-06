@@ -152,56 +152,62 @@ Example JSON response:
 
 ```json
 {
-  "title": "Rick Astley - Never Gonna Give You Up (Official Music Video)",
-  "id": "Rick Astley - Never Gonna Give You Up (Official Music Video)",
-  "publication_time": "Rick Astley - Never Gonna Give You Up (Official Music Video)",
-  "type": "video",
-  "duration": "3:33",
-  "viewcount": {
-    "text": "1,224,529,631 views",
-    "short": "1.2B views"
+  "type":"video",
+  "id":"dQw4w9WgXcQ",
+  "title":"Rick Astley - Never Gonna Give You Up (Official Music Video)",
+  "publishedTime":"12 years ago",
+  "duration":"3:33",
+  "viewCount":{
+    "text":"1,226,115,753 views",
+    "short":"1.2B views"
   },
-  "link": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-  "thumbnails": [
+  "thumbnails":[
     {
-      "url": "https://i.ytimg.com/vi/dQw4w9WgXcQ/hq720.jpg?sqp=-oaymwEcCOgCEMoBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAfut6ib46TKYWnNm5PxBrcX8HLWg",
-      "width": "360",
-      "height": "202"
+      "url":"https://i.ytimg.com/vi/dQw4w9WgXcQ/hq720.jpg?sqp=-oaymwEcCOgCEMoBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAfut6ib46TKYWnNm5PxBrcX8HLWg",
+      "width":360,
+      "height":202
     },
     {
-      "url": "https://i.ytimg.com/vi/dQw4w9WgXcQ/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLDRxusbm2_TGTnDWEIhBTYW2cUQkw",
-      "width": "720",
-      "height": "404"
+      "url":"https://i.ytimg.com/vi/dQw4w9WgXcQ/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLDRxusbm2_TGTnDWEIhBTYW2cUQkw",
+      "width":720,
+      "height":404
     }
   ],
-  "description": [
+  "richThumbnail":{
+    "url":"https://i.ytimg.com/an_webp/dQw4w9WgXcQ/mqdefault_6s.webp?du=3000&sqp=CPye9pQG&rs=AOn4CLDYr_LyEDlnnOvNJBPXL8lI2JF7jA",
+    "width":320,
+    "height":180
+  },
+  "descriptionSnippet":[
     {
-      "text": "“"
+      "text":"“"
     },
     {
-      "text": "Never",
-      "bold": "True"
+      "text":"Never Gonna Give You Up",
+      "bold":true
     },
     {
-      "text": " Gonna Give You Up” was a global smash on its release in July 1987, topping the charts in 25 countries including Rick's ..."
+      "text":"” was a global smash on its release in July 1987, topping the charts in 25 countries including Rick's ..."
     }
   ],
-  "channel": {
-    "name": "Rick Astley",
-    "id": "UCuAXFkgsw1L7xaCfnd5JJOw",
-    "thumbnails": [
+  "channel":{
+    "name":"Rick Astley",
+    "id":"UCuAXFkgsw1L7xaCfnd5JJOw",
+    "thumbnails":[
       {
-        "url": "https://yt3.ggpht.com/BbWaWU-qyR5nfxxXclxsI8zepppYL5x1agIPGfRdXFm5fPEewDsRRWg4x6P6fdKNhj84GoUpUI4=s88-c-k-c0x00ffffff-no-rj",
-        "width": "68",
-        "height": "68"
+        "url":"https://yt3.ggpht.com/BbWaWU-qyR5nfxxXclxsI8zepppYL5x1agIPGfRdXFm5fPEewDsRRWg4x6P6fdKNhj84GoUpUI4=s88-c-k-c0x00ffffff-no-rj",
+        "width":68,
+        "height":68
       }
     ],
-    "link": "https://www.youtube.com/channel/UCuAXFkgsw1L7xaCfnd5JJOw"
+    "link":"https://www.youtube.com/channel/UCuAXFkgsw1L7xaCfnd5JJOw"
   },
-  "accessibility": {
-    "title": "Rick Astley - Never Gonna Give You Up (Official Music Video) by Rick Astley 12 years ago 3 minutes, 33 seconds 1,224,529,631 views",
-    "duration": "3 minutes, 33 seconds"
-  }
+  "accessibility":{
+    "title":"Rick Astley - Never Gonna Give You Up (Official Music Video) by Rick Astley 12 years ago 3 minutes, 33 seconds 1,226,115,753 views",
+    "duration":"3 minutes, 33 seconds"
+  },
+  "link":"https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+  "shelfTitle":null
 }
 ```
 </td>
