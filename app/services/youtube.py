@@ -3,6 +3,7 @@ import os
 import pathlib
 import typing
 
+import requests
 import youtube_dl
 import yt_dlp
 from aioredis import client
@@ -20,6 +21,7 @@ class FileDownload:
         "noplaylist": True,
         "quiet": True,
         "no_warnings": True,
+        "ignoreerrors": True,
         "outtmpl": os.path.join(
             *f"{settings.BASE_DIR},{settings.MEDIA_ROOT},%(title)s.%(epoch)s.%(ext)s".split(
                 ","
@@ -48,6 +50,46 @@ class YtDownloadManager:
     @staticmethod
     async def search_video_plus(search_term: str, limit: int) -> typing.Any:
         return await ytsearch.VideosSearch(search_term, limit=limit).next()  # type: ignore
+
+    @staticmethod
+    async def search_video_list(search_term: str, list_: int) -> typing.Any:
+        loop = asyncio.get_running_loop()
+        video: typing.Any = None
+
+        with yt_dlp.YoutubeDL(
+            {
+                "match_filter": yt_dlp.utils.match_filter_func("!is_live"),  # type: ignore
+                "ignoreerrors": True,
+                "no_warnings": True,
+                "quiet": True,
+                "format": "bestaudio",
+                "noplaylist": True,
+            }
+        ) as ydl:
+            try:
+                await loop.run_in_executor(None, requests.get, search_term)
+            except (
+                requests.exceptions.ConnectionError,
+                requests.exceptions.MissingSchema,
+            ):
+                video = await loop.run_in_executor(
+                    None,
+                    ydl.extract_info,  # type: ignore
+                    f"ytsearch{list_}:{search_term}",
+                    False,
+                )
+            else:
+                video = await loop.run_in_executor(
+                    None,
+                    ydl.extract_info,  # type: ignore
+                    search_term,
+                    False,
+                )
+
+        if "entries" in video:
+            return video["entries"]
+        else:
+            return video
 
     def download_progess_hook(self, download: dict[str, typing.Any]) -> None:
         if download["status"] == "finished":

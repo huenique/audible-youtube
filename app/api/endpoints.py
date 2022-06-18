@@ -4,9 +4,9 @@ import secrets
 import typing
 
 import fastapi
+import httpx
 from aioredis import client
 from fastapi import responses
-import httpx
 from starlette import background, requests, status
 
 from app import utils
@@ -39,6 +39,26 @@ async def _validate_video_duration(duration: str) -> None:
             status_code=status.HTTP_507_INSUFFICIENT_STORAGE,
             detail=content.yt_query_507_detail,
         )
+
+
+async def _extract_video_summary(
+    entries: list[dict[str, typing.Any]]
+) -> dict[str, list[dict[str, typing.Any]]]:
+    playlist: dict[str, list[dict[str, typing.Any]]] = {"playlist": []}
+
+    for entry in entries:
+        playlist["playlist"].append(
+            {
+                "id": entry["id"],
+                "title": entry["title"],
+                "thumbnail": entry["thumbnail"],
+                "uploader": entry["uploader"],
+                "duration": entry["duration"],
+                "view_count": entry["view_count"],
+            }
+        )
+
+    return playlist
 
 
 @router.get(
@@ -208,13 +228,18 @@ async def search(
     _: requests.Request,
     query: str,
     limit: int = 1,
+    size: typing.Optional[int] = None,
     youtube: youtube.YtDownloadManager = fastapi.Depends(dependencies.get_ytdl_manager),
 ):
-    result = await youtube.search_video_plus(query, limit)
-    result = await _validate_search_result(result["result"])
+    if size is not None:
+        result = await youtube.search_video_list(query, size)
+        result = await _extract_video_summary(result)
+    else:
+        result = await youtube.search_video_plus(query, limit)
+        result = await _validate_search_result(result["result"][0])
 
     try:
-        return responses.ORJSONResponse(content=result[0])
+        return responses.ORJSONResponse(content=result)
     except (KeyError, httpx.ConnectError) as err:
         raise fastapi.HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail={"msg": err}
