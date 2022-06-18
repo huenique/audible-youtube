@@ -6,6 +6,7 @@ import typing
 import fastapi
 from aioredis import client
 from fastapi import responses
+import httpx
 from starlette import background, requests, status
 
 from app import utils
@@ -35,7 +36,7 @@ async def _validate_search_result(result: _T) -> _T:
 async def _validate_video_duration(duration: str) -> None:
     if not await utils.validate_duration(duration, 1):
         raise fastapi.HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            status_code=status.HTTP_507_INSUFFICIENT_STORAGE,
             detail=content.yt_query_507_detail,
         )
 
@@ -53,6 +54,10 @@ async def _validate_video_duration(duration: str) -> None:
             "description": "No video matched the search query.",
         },
         status.HTTP_500_INTERNAL_SERVER_ERROR: {
+            "content": content.yt_query_500,
+            "description": "Something went wrong.",
+        },
+        status.HTTP_507_INSUFFICIENT_STORAGE: {
             "content": content.yt_query_507,
             "description": "The YouTube video is too big for the filesystem.",
         },
@@ -144,6 +149,10 @@ async def save(
             "description": "No video matched the search query.",
         },
         status.HTTP_500_INTERNAL_SERVER_ERROR: {
+            "content": content.yt_query_500,
+            "description": "Something went wrong.",
+        },
+        status.HTTP_507_INSUFFICIENT_STORAGE: {
             "content": content.yt_query_507,
             "description": "The YouTube video is too big for the filesystem.",
         },
@@ -170,9 +179,9 @@ async def convert(
             link=result["link"],
             thumbnails=result["thumbnails"],
         )
-    except (KeyError, AttributeError) as key_err:
+    except (KeyError, AttributeError, httpx.ConnectError) as err:
         raise fastapi.HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail={"msg": key_err}
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail={"msg": err}
         )
 
 
@@ -189,6 +198,10 @@ async def convert(
             "content": content.yt_query_404,
             "description": "No video matched the search query.",
         },
+        status.HTTP_500_INTERNAL_SERVER_ERROR: {
+            "content": content.yt_query_500,
+            "description": "Something went wrong.",
+        },
     },
 )
 async def search(
@@ -196,15 +209,15 @@ async def search(
     query: str,
     limit: int = 1,
     youtube: youtube.YtDownloadManager = fastapi.Depends(dependencies.get_ytdl_manager),
-): 
+):
     result = await youtube.search_video_plus(query, limit)
     result = await _validate_search_result(result["result"])
 
     try:
         return responses.ORJSONResponse(content=result[0])
-    except KeyError as key_err:
+    except (KeyError, httpx.ConnectError) as err:
         raise fastapi.HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail={"msg": key_err}
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail={"msg": err}
         )
 
 

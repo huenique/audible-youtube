@@ -18,6 +18,8 @@ VIDEO_IS_TOO_LONG = "the specified video is too long"
 
 QUERY_HAS_NO_MATCH = "search query did not return a matching result"
 
+SYSTEM_ERR = "please report this error to https://github.com/huenique/audible-youtube"
+
 # success messages
 SEARCH_RESULT_CONTENT = {
     "application/json": {
@@ -107,6 +109,7 @@ def fmt_error_content(message: str):
 class AudibleYtContent:
     def __init__(self) -> None:
         self.yt_query_404 = fmt_error_content(QUERY_HAS_NO_MATCH)
+        self.yt_query_500 = fmt_error_content(SYSTEM_ERR)
         self.yt_query_507 = fmt_error_content(VIDEO_IS_TOO_LONG)
         self.yt_ticket_404 = fmt_error_content(TICKET_FILE_IS_MISSING)
         self.yt_ticket_409 = fmt_error_content(TICKET_IS_NOT_READY)
@@ -114,6 +117,10 @@ class AudibleYtContent:
     @property
     def yt_query_404_detail(self):
         return QUERY_HAS_NO_MATCH
+
+    @property
+    def yt_query_500_detail(self):
+        return SYSTEM_ERR
 
     @property
     def yt_query_507_detail(self):
