@@ -12,9 +12,9 @@ from app import settings, utils
 
 
 class FileDownload:
-    name: str = ""
-    size: str = ""
-    path: str = ""
+    name = ""
+    size = ""
+    path = ""
 
     progress_hook: dict[str, typing.Any] = {
         "noplaylist": True,
@@ -46,8 +46,8 @@ class YtDownloadManager:
         return url
 
     @staticmethod
-    async def search_video_plus(search_term: str) -> typing.Any:
-        return await ytsearch.VideosSearch(search_term, limit=1).next()  # type: ignore
+    async def search_video_plus(search_term: str, limit: int) -> typing.Any:
+        return await ytsearch.VideosSearch(search_term, limit=limit).next()  # type: ignore
 
     def download_progess_hook(self, download: dict[str, typing.Any]) -> None:
         if download["status"] == "finished":
@@ -97,7 +97,7 @@ class YtDownloadManager:
             with dl_manager(self.file_download.progress_hook) as ydl:
                 _ = await utils.exec_as_aio(ydl.extract_info, query)  # type: ignore
         except err:
-            result = await self.search_video_plus(query)
+            result = await self.search_video_plus(query, 1)
 
             if result is not None:
                 await self.download_vid(result["result"][0]["link"], dl_manager, err)
