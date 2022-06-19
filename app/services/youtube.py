@@ -54,7 +54,7 @@ class YtDownloadManager:
     @staticmethod
     async def search_video_list(search_term: str, list_: int) -> typing.Any:
         loop = asyncio.get_running_loop()
-        video: typing.Any = None
+        video: dict[str, typing.Any]
 
         with yt_dlp.YoutubeDL(
             {
