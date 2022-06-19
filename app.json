@@ -12,7 +12,7 @@
     },
     "APP_VERSION": {
       "description": "Latest app version (used by OpenAPI)",
-      "value": "1.1.0-alpha.5"
+      "value": "1.1.0-alpha.6"
     },
     "ALLOWED_ORIGINS": {
       "description": "Origins (domain, scheme, or port) allowed to use the app as a backend. Allow all as default",
