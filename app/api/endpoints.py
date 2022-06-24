@@ -41,26 +41,6 @@ async def _validate_video_duration(duration: str) -> None:
         )
 
 
-async def _extract_video_summary(
-    entries: list[dict[str, typing.Any]]
-) -> dict[str, list[dict[str, typing.Any]]]:
-    playlist: dict[str, list[dict[str, typing.Any]]] = {"playlist": []}
-
-    for entry in entries:
-        playlist["playlist"].append(
-            {
-                "id": entry["id"],
-                "title": entry["title"],
-                "thumbnail": entry["thumbnail"],
-                "uploader": entry["uploader"],
-                "duration": entry["duration"],
-                "view_count": entry["view_count"],
-            }
-        )
-
-    return playlist
-
-
 @router.get(
     "/download",
     name="Download",
@@ -227,16 +207,10 @@ async def convert(
 async def search(
     _: requests.Request,
     query: str,
-    limit: int = 1,
-    size: typing.Optional[int] = None,
+    count: typing.Optional[int] = None,
     youtube: youtube.YtDownloadManager = fastapi.Depends(dependencies.get_ytdl_manager),
 ):
-    if size is not None:
-        result = await youtube.search_video_list(query, size)
-        result = await _extract_video_summary(result)
-    else:
-        result = await youtube.search_video_plus(query, limit)
-        result = await _validate_search_result(result["result"][0])
+    result = await youtube.search_video_plus(query, count)
 
     try:
         return responses.ORJSONResponse(content=result)

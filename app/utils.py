@@ -79,3 +79,16 @@ async def validate_duration(
         return False
     else:
         return True
+
+
+async def async_range(count: int) -> typing.AsyncGenerator[int, None]:
+    """Async version of range()
+
+    Args:
+        count (int): Int to stop at from 0.
+
+    Yields:
+        Iterator[typing.AsyncGenerator[int, None]]
+    """
+    for i in range(count):
+        yield i

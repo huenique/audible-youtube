@@ -48,11 +48,22 @@ class YtDownloadManager:
         return url
 
     @staticmethod
-    async def search_video_plus(search_term: str, limit: int) -> typing.Any:
-        return await ytsearch.VideosSearch(search_term, limit=limit).next()  # type: ignore
+    async def search_video_plus(
+        search_term: str, count: typing.Optional[int] = None
+    ) -> typing.Any:
+        results: list[dict[str, typing.Any]] = []
+        search = ytsearch.VideosSearch(search_term)
+
+        if count is not None:
+            async for _ in utils.async_range(count):
+                result: dict[str, typing.Any] = await search.next()
+                results.append(result)
+            return results
+        else:
+            return await search.next()  # type: ignore
 
     @staticmethod
-    async def search_video_list(search_term: str, list_: int) -> typing.Any:
+    async def search_video_list(search_term: str, count: int) -> typing.Any:
         loop = asyncio.get_running_loop()
         video: dict[str, typing.Any]
 
@@ -75,7 +86,7 @@ class YtDownloadManager:
                 video = await loop.run_in_executor(
                     None,
                     ydl.extract_info,  # type: ignore
-                    f"ytsearch{list_}:{search_term}",
+                    f"ytsearch{count}:{search_term}",
                     False,
                 )
             else:
