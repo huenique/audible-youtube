@@ -213,7 +213,7 @@ async def search(
     result = await youtube.search_video_plus(query, count)
 
     try:
-        return responses.ORJSONResponse(content=result)
+        return responses.ORJSONResponse(content={"playlist": result})
     except (KeyError, httpx.ConnectError) as err:
         raise fastapi.HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail={"msg": err}
