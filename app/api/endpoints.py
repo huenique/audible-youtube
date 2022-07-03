@@ -74,7 +74,7 @@ async def download(
     result = result[0]
 
     await _validate_video_duration(result["duration"])
-    await youtube.download_video_plus(query)
+    await youtube.download_video_plus(result["link"])
     bg_tasks.add_task(os.unlink, youtube.file_download.path)  # type: ignore
 
     return responses.FileResponse(
@@ -171,7 +171,7 @@ async def convert(
         ticket = secrets.token_hex(16)
 
         await _validate_video_duration(result["duration"])
-        asyncio.create_task(youtube.convert_video(query, redis, ticket))
+        asyncio.create_task(youtube.convert_video(result["link"], redis, ticket))
 
         return video.Ticket(
             ticket=ticket,
