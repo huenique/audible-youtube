@@ -69,7 +69,7 @@ async def download(
     bg_tasks: background.BackgroundTasks,
     youtube: youtube.YtDownloadManager = fastapi.Depends(dependencies.get_ytdl_manager),
 ) -> responses.FileResponse:
-    result = await youtube.search_video_plus(query, 1)
+    result = await youtube.search_video_plus(query)
     result = await _validate_search_result(result["result"])
     result = result[0]
 
@@ -165,7 +165,7 @@ async def convert(
     youtube: youtube.YtDownloadManager = fastapi.Depends(dependencies.get_ytdl_manager),
 ) -> video.Ticket:
     try:
-        result = await youtube.search_video_plus(query, 1)
+        result = await youtube.search_video_plus(query)
         result = await _validate_search_result(result["result"])
         result = result[0]
         ticket = secrets.token_hex(16)
