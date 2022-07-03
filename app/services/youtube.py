@@ -171,7 +171,7 @@ class YtDownloadManager:
         self.client = client
         self.ticket = ticket
 
-        await client.Redis.hmset(  # type: ignore
+        await client.hmset(  # type: ignore
             self.ticket,
             {"path": self.file_download.path, "name": self.file_download.name},
         )
@@ -179,7 +179,7 @@ class YtDownloadManager:
 
         # The file related attribs will be updated once youtube-dl or yt-dlp finishes,
         # so we call hmset() again.
-        await client.Redis.hmset(  # type: ignore
+        await client.hmset(  # type: ignore
             self.ticket,
             {"path": self.file_download.path, "name": self.file_download.name},
         )
