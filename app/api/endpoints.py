@@ -114,7 +114,7 @@ async def save(
     if all(value == b"" for value in file):
         raise fastapi.HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail=content.yt_ticket_409,
+            detail=content.yt_ticket_409_detail,
         )
 
     fpath = file[0] or ""
