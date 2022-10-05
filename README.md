@@ -1,6 +1,6 @@
 # audible-youtube
 
-audible-youtube is a backend service that enables application softwares to convert and download YouTube videos using REST API endpoints.
+audible-youtube is a backend service that enables application softwares to convert and download YouTube videos using API endpoints.
 
 The project aims to decouple and eliminate the overhead of converting YouTube videos to audio files from other apps or services.
 
